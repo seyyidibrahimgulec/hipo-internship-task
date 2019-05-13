@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Rate, Like
 
-# Register your models here.
+
+admin.site.register(Like)
+admin.site.register(Rate)
