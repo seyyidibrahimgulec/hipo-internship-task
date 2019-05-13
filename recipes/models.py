@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from ingredients.models import Ingredients
+from ingredients.models import Ingredient
 
 class Recipe(models.Model):
     DIFFICULTIES = (
@@ -19,4 +19,4 @@ class Recipe(models.Model):
 
     # likes = models.ManyToManyField()
     # rates = models.ManyToManyField()
-    ingredients = models.ManyToManyField(Ingredients, related_name='recipes')
+    ingredients = models.ManyToManyField(Ingredient, related_name='recipes')
