@@ -22,3 +22,7 @@ class Recipe(models.Model):
     # rates = models.ManyToManyField()
     ingredients = models.ManyToManyField(Ingredient, related_name='recipes')
     view_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.title
+
