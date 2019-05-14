@@ -4,17 +4,53 @@
 {% endblock %}
 
 {% block content %}
-  <div class="card">
-    <h2>{{ recipe }}</h2>
+    <h1>{{ recipe }}</h1>
     <div class="card-footer">
-      {{ recipe.created_time|date:"d/m/Y"  }} . {{ recipe.rate_avg }}/5 ({{ recipe.rate_count }}) . {{ recipe.like_count }} likes . by {{ request.user }}
+      {{ recipe.created_time|date:"d/m/Y"  }} . {{ recipe.rate_avg }}/5 ({{ recipe.rate_count }}) . likes . by {{ request.author }}
     </div>
 
-    <img class="food-img" alt="{{ recipe }}" src="{{ recipe.image.url }}"/>
     <p>
-    {{ recipe.description }}
+        <img class="food-img" alt="{{ recipe }}" src="{{ recipe.image.url }}"/>
     </p>
 
-  </div>
+    {% if request.user.is_authenticated  %}
+      {% if is_liked %}
+        <button type="button" class="btn btn-success">
+          You Have Liked ({{ recipe.like_count }})
+        </button>
+      {% else %}
+        <button type="button" class="btn btn-success">
+          Like ({{ recipe.like_count }})
+        </button>
+      {% endif %}
+    {% endif %}
 
+    <h2>
+      Ingredients
+    </h2>
+    <ul>
+      {% for ingredient in recipe.ingredients.all %}
+        <li>
+          {{ ingredient }}
+        </li>
+      {% endfor %}
+    </ul>
+    <h2>
+      Description
+    </h2>
+    <p>
+      {{ recipe.description }}
+    </p>
+
+    <form action="/your-name/" method="post">
+      {% csrf_token %}
+      <select class="form-control" style="width:50px;">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+      </select>
+      <input class="btn btn-primary" type="submit" value="Rate">
+    </form>
 {% endblock %}

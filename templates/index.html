@@ -12,13 +12,13 @@
         {{ recipe.description |truncatechars:200}}
       </p>
       <div class="card-footer">
-        {{ recipe.created_time|date:"d/m/Y"  }} . {{ recipe.rate_avg }}/5 ({{ recipe.rate_count }}) . {{ recipe.like_count }} likes . by {{ request.user }}
+        {{ recipe.created_time|date:"d/m/Y"  }} . {{ recipe.rate_avg }}/5 ({{ recipe.rate_count }}) . {{ recipe.like_count }} likes . by {{ request.author }}
       </div>
     </div>
 
   {% endfor %}
 
-  <div class="pageination-container">
+  <div class="pagination-container">
     {% if recipes.has_previous %}
       <a href="?page={{ recipes.previous_page_number }}">
     <button class="btn btn-default">
@@ -38,7 +38,7 @@
   <p class="current">
     Page {{ recipes.number }} of {{ recipes.paginator.num_pages }}.
   </p>
-
+  
   </div>
 
 {% endblock %}

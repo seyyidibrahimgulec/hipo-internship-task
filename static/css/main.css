@@ -1,5 +1,6 @@
 body {
     padding-top: 50px;
+    margin-bottom: 20px;
 }
 .card{
     border-radius: 5px;
@@ -12,7 +13,7 @@ body {
     color: black;
 }
 
-.card .food-img{
+.food-img{
     max-width: 35%;
 
 }
