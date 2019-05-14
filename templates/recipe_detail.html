@@ -1,13 +1,26 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
   {{ recipe }}
 {% endblock %}
 
 {% block content %}
     <h1>{{ recipe }}</h1>
-    <div class="card-footer">
-      {{ recipe.created_time|date:"d/m/Y"  }} . {{ recipe.rate_avg }}/5 ({{ recipe.rate_count }}) . likes . by {{ request.author }}
+    <div class="card-top">
+        <div class="item">
+            <img src="{% static 'img/knife.png' %}" alt="">
+            {{ recipe.author }}
+        </div>
+        <div class="item">
+            <img src="{% static 'img/muscles.png' %}" alt="">
+            {{ recipe.get_difficulty_display }}
+        </div>
+        <div class="item">
+            <img src="{% static 'img/circular-clock.png' %}" alt="">
+            {{ recipe.created_time|date:"d/m/Y" }}
+        </div>
     </div>
+    <br/>
 
     <p>
         <img class="food-img" alt="{{ recipe }}" src="{{ recipe.image.url }}"/>
