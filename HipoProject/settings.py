@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recipes',
     'ingredients',
-    'interactions',
 ]
 
 MIDDLEWARE = [
@@ -125,7 +124,7 @@ DEFAULT_CHARSET = 'utf-8'
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIR = [
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     'static/',
 ]

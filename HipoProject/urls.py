@@ -17,10 +17,13 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
 from django.conf import settings
+from recipes.views import recipe_detail, index
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-] + static(
-    settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    path('', index),
+    path('recipe/<int:pk>/', recipe_detail),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}
+  Recipe Project
+{% endblock %}
+
+{% block content %}
+  {% for recipe in recipes %}
+    <div class="card">
+      <h2><a href="recipe/{{recipe.pk}}">{{ recipe }}</a></h2>
+      <img class="food-img" alt="{{ recipe }}" src="{{ recipe.image.url }}"/>
+      <p>
+        {{ recipe.description |truncatechars:200}}
+      </p>
+      <div class="card-footer">
+        {{ recipe.created_time|date:"d/m/Y"  }} . {{ recipe.rate_avg }}/5 ({{ recipe.rate_count }}) . {{ recipe.like_count }} likes . by {{ request.user }}
+      </div>
+    </div>
+
+  {% endfor %}
+
+  <div class="pageination-container">
+    {% if recipes.has_previous %}
+      <a href="?page={{ recipes.previous_page_number }}">
+    <button class="btn btn-default">
+      Previous Page
+    </button>
+      </a>
+  {% endif %}
+
+  {% if recipes.has_next %}
+    <a href="?page={{ recipes.next_page_number }}">
+      <button class="btn btn-default">
+        Next Page
+      </button>
+    </a>
+  {% endif %}
+
+  <p class="current">
+    Page {{ recipes.number }} of {{ recipes.paginator.num_pages }}.
+  </p>
+
+  </div>
+
+{% endblock %}
