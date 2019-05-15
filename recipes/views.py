@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.views.generic import CreateView
 from recipes.forms import NewRecipesForm
 from django.contrib.auth.decorators import login_required
+from ingredients.models import Ingredient
 
 
 class NewRecipe(CreateView):
@@ -16,6 +17,9 @@ class NewRecipe(CreateView):
         obj = form.save(commit=False)
         obj.author = self.request.user
         obj.save()
+        for ingredient in form.cleaned_data['ingredients']:
+            saved_ingredient = Ingredient.objects.create(ingredient=ingredient)
+            obj.ingredients.add(saved_ingredient)
         return redirect(recipe_detail, obj.id)
 
 

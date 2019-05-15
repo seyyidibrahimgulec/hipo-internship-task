@@ -23,8 +23,8 @@ from users.views import SignUp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index),
-    path('recipe/<int:pk>/', recipe_detail),
+    path('', index, name="index"),
+    path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup/', SignUp.as_view(), name='signup'),
     path('new_recipe/', NewRecipe.as_view(), name='new_recipe'),
