@@ -7,7 +7,7 @@
     <div class="col-md-8">
         {% for recipe in recipes %}
             <div class="card">
-              <h2><a href="recipe/{{recipe.pk}}">{{ recipe }}</a></h2>
+              <h2><a href="{% url 'recipe_detail' pk=recipe.pk %}">{{ recipe }}</a></h2>
               <img class="food-img" alt="{{ recipe }}" src="{{ recipe.image.url }}"/>
               <p>
                 {{ recipe.description |truncatechars:200}}
@@ -29,7 +29,7 @@
             {% endif %}
 
             {% if recipes.has_next %}
-                <a href="?page={{ recipes.next_page_number }}">
+                <a href="?page={{ recipes.next_page_number }}{% if request.GET.q %}&&q={{ request.GET.q }}{% endif %}">
                 <button class="btn btn-default">
                     Next Page
                 </button>
@@ -45,10 +45,13 @@
     <div class="col-md-4">
         <div class="card">
             <h3>Search</h3>
-            <form action="#" method="get">
+            <form action="{% url 'search' %}" method="get">
                 <input type="text" name ="q">
                 <input class="btn btn-primary" type="submit" value="Search">
             </form>
+            <p>You can divide your keywords with comma ",". Comma will combine your searches with OR.</p>
+            <p>For instance "egg, milk" query will get the recipes which have egg OR milk ingredient.</p>
+            <p>Queries are searching from ingredients, title and the description of the recipes.</p>
         </div>
         <div class="card">
             <h3>Top Used Ingredients</h3>

@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
-from recipes.views import recipe_detail, index, NewRecipe, like_recipe, rate_recipe
+from recipes.views import recipe_detail, index, NewRecipe, like_recipe, rate_recipe, search
 from django.urls import path, include
 from users.views import SignUp
 
@@ -27,6 +27,7 @@ urlpatterns = [
     path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('signup/', SignUp.as_view(), name='signup'),
+    path('search/', search, name='search'),
     path('new_recipe/', NewRecipe.as_view(), name='new_recipe'),
     path('like_recipe/<int:pk>/', like_recipe, name="like_recipe"),
     path('rate_recipe/<int:pk>/', rate_recipe, name="rate_recipe"),
