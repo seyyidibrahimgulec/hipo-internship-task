@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>SignUp</h2>
+  <h2>Share a Recipe</h2>
   <form method="post"  enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}

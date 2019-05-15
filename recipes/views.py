@@ -54,20 +54,20 @@ def index(request):
 
 
 def search(request):
-    ingredients_str = [x.strip() for x in request.GET.get("q").split(",")]
-    ingredients_ids = set()
-    for i in ingredients_str:
-        for j in Ingredient.objects.filter(ingredient__contains=i):
-            ingredients_ids.add(j.id)
+    terms = [x.strip() for x in request.GET.get("q").split(",")]
+    ids = set()
+    for term in terms:
+        for j in Ingredient.objects.filter(ingredient__contains=term):
+            ids.add(j.id)
     result_recipes = Recipe.objects.filter(
-        ingredients__in=list(ingredients_ids)).order_by("-created_time")
-    for i in ingredients_str:
+        ingredients__in=list(ids)).order_by("-created_time")
+    for term in terms:
         tmp = Recipe.objects.filter(
-            Q(title__contains=i)
-            | Q(description__contains=i)).order_by('-created_time')
+            Q(title__contains=term)
+            | Q(description__contains=term)).order_by('-created_time')
         result_recipes = result_recipes | tmp
 
-    all_recipes = result_recipes
+    all_recipes = result_recipes.distinct()
     return main_page_view(request, all_recipes)
 
 
