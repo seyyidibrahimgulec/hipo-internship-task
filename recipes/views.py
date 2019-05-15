@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from recipes.models import Recipe, Like, Rate
 from django.core.paginator import Paginator
+from django.db.models import Count
 
 
 def index(request):
-    page_content_count = 1
+    page_content_count = 2
 
     # Pagination
     all_recipes = Recipe.objects.all()
@@ -12,8 +13,14 @@ def index(request):
     page = request.GET.get('page')
     recipes = paginator.get_page(page)
 
+    # Most used ingredients
+    most_used_ingredients = Recipe.objects.all().values(
+        'ingredients__ingredient').annotate(
+            total=Count('ingredients')).order_by('-total')[:5]
+
     context = {
         'recipes': recipes,
+        'most_used_ingredients': most_used_ingredients,
     }
 
     return render(request, "index.html", context)
