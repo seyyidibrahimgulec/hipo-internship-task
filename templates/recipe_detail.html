@@ -28,13 +28,17 @@
 
     {% if request.user.is_authenticated  %}
       {% if is_liked %}
-        <button type="button" class="btn btn-success">
-          You Have Liked ({{ recipe.like_count }})
-        </button>
+          <a href="{% url 'like_recipe' pk=recipe.pk %}">
+              <button type="button" class="btn btn-success">
+                  You Have Liked ({{ recipe.like_count }})
+              </button>
+          </a>
       {% else %}
-        <button type="button" class="btn btn-success">
-          Like ({{ recipe.like_count }})
-        </button>
+          <a href="{% url 'like_recipe' pk=recipe.pk %}">
+              <button type="button" class="btn btn-success">
+                  Like ({{ recipe.like_count }})
+              </button>
+          </a>
       {% endif %}
     {% endif %}
 
@@ -55,16 +59,23 @@
       {{ recipe.description }}
     </p>
     {% if request.user.is_authenticated %}
-        <form action="/your-name/" method="post">
+        <form action="{% url 'rate_recipe' pk=recipe.pk %}" method="get">
           {% csrf_token %}
-          <select class="form-control" style="width:50px;">
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
+          <select name="score" class="form-control" style="width:50px;">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
-          <input class="btn btn-primary" type="submit" value="Rate">
+          <input class="btn btn-primary" type="submit" value="
+                        {% if is_rated %}
+                            You Have Rated ({{ rate_point }})
+                        {% else %}
+                            Rate
+                        {% endif %}
+
+">
         </form>
     {% endif %}
 {% endblock %}

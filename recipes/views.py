@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.views.generic import CreateView
 from recipes.forms import NewRecipesForm
+from django.contrib.auth.decorators import login_required
 
 
 class NewRecipe(CreateView):
@@ -56,7 +57,7 @@ def recipe_detail(request, pk):
         rate_point = 0
         if is_rated:
             rate_point = Rate.objects.get(
-                user=request.user, recipe=recipe).point
+                user=request.user, recipe=recipe).score
 
         extra_context = {
             "is_liked": is_liked,
@@ -67,5 +68,35 @@ def recipe_detail(request, pk):
         context = {**context, **extra_context}
 
     return render(request, 'recipe_detail.html', context)
+
+
+@login_required
+def like_recipe(request, pk):
+    recipe = Recipe.objects.get(pk=pk)
+
+    try:
+        like = Like.objects.get(user=request.user, recipe=recipe)
+        like.delete()
+        return redirect(recipe_detail, recipe.id)
+
+    except Like.DoesNotExist:
+        Like.objects.create(user=request.user, recipe=recipe)
+        return redirect(recipe_detail, recipe.id)
+
+
+@login_required
+def rate_recipe(request, pk):
+    recipe = Recipe.objects.get(id=pk)
+    rate_score = request.GET.get('score')
+
+    try:
+        rate = Rate.objects.get(user=request.user, recipe=recipe)
+        rate.score = rate_score
+        rate.save()
+        return redirect(recipe_detail, recipe.id)
+
+    except Rate.DoesNotExist:
+        Rate.objects.create(user=request.user, recipe=recipe, score=rate_score)
+        return redirect(recipe_detail, recipe.id)
 
 
