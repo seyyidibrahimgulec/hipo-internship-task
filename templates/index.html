@@ -21,7 +21,7 @@
 
         <div class="pagination-container">
             {% if recipes.has_previous %}
-                <a href="?page={{ recipes.previous_page_number }}">
+                <a href="?page={{ recipes.previous_page_number }}{% if request.GET.q %}&&q={{ request.GET.q }}{% endif %}">
                 <button class="btn btn-default">
                     Previous Page
                 </button>
