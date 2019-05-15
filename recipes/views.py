@@ -1,7 +1,21 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from recipes.models import Recipe, Like, Rate
 from django.core.paginator import Paginator
 from django.db.models import Count
+from django.views.generic import CreateView
+from recipes.forms import NewRecipesForm
+
+
+class NewRecipe(CreateView):
+    model = Recipe
+    form_class = NewRecipesForm
+    success_url = "google.com"
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.author = self.request.user
+        obj.save()
+        return redirect(recipe_detail, obj.id)
 
 
 def index(request):
