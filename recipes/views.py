@@ -32,7 +32,7 @@ def recipe_detail(request, pk):
         "recipe": recipe,
     }
 
-    if request.user:
+    if request.user.is_authenticated:
         is_liked = Like.objects.filter(
             user=request.user, recipe=recipe).count()
 

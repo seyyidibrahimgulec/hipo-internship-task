@@ -54,16 +54,17 @@
     <p>
       {{ recipe.description }}
     </p>
-
-    <form action="/your-name/" method="post">
-      {% csrf_token %}
-      <select class="form-control" style="width:50px;">
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-      </select>
-      <input class="btn btn-primary" type="submit" value="Rate">
-    </form>
+    {% if request.user.is_authenticated %}
+        <form action="/your-name/" method="post">
+          {% csrf_token %}
+          <select class="form-control" style="width:50px;">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
+          <input class="btn btn-primary" type="submit" value="Rate">
+        </form>
+    {% endif %}
 {% endblock %}
