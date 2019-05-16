@@ -6,9 +6,9 @@ from django.db.models import Avg
 
 class Recipe(models.Model):
     DIFFICULTIES = (
-        ('E', 'EASY'),
-        ('M', 'MEDIUM'),
-        ('H', 'HARD'),
+        ('E', 'Easy'),
+        ('M', 'Medium'),
+        ('H', 'Hard'),
     )
 
     title = models.CharField(max_length=300)
