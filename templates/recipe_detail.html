@@ -19,6 +19,9 @@
             <img src="{% static 'img/circular-clock.png' %}" alt="">
             {{ recipe.created_time|date:"d/m/Y" }}
         </div>
+        {% if recipe.author == request.user %}
+            <a href="{% url 'update_recipe' pk=recipe.pk %}">Edit the Recipe</a>
+        {% endif %}
     </div>
     <br/>
 

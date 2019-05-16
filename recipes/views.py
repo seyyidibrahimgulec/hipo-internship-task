@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
 from django.db.models import Q
 from ingredients.models import Ingredient
+from recipes.permisions import SameUserOnlyPermission
 
 
 class NewRecipe(CreateView):
@@ -23,9 +24,13 @@ class NewRecipe(CreateView):
         return redirect(recipe_detail, obj.id)
 
 
-class UpdateRecipe(UpdateView):
+class UpdateRecipe(UpdateView, SameUserOnlyPermission):
     model = Recipe
     form_class = NewRecipesForm
+
+    def form_valid(self, form):
+        obj = form.save(commit=True)
+        return redirect(recipe_detail, obj.id)
 
 
 def main_page_view(request, all_recipes: QuerySet):
