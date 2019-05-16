@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from recipes.models import Recipe, Like, Rate
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from recipes.forms import NewRecipesForm
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
@@ -21,6 +21,11 @@ class NewRecipe(CreateView):
         for ingredient in form.cleaned_data['ingredients']:
             obj.ingredients.add(ingredient)
         return redirect(recipe_detail, obj.id)
+
+
+class UpdateRecipe(UpdateView):
+    model = Recipe
+    form_class = NewRecipesForm
 
 
 def main_page_view(request, all_recipes: QuerySet):
