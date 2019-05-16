@@ -57,7 +57,13 @@
             <h3>Top Used Ingredients</h3>
             <ul>
                 {% for ingredient in most_used_ingredients %}
-                    <li>{{ ingredient.ingredients__ingredient }}({{ ingredient.total }})</li>
+                    {% if ingredient.total %}
+                        <li>
+                            <a href="{% url 'ingredient' ingredient_value=ingredient.ingredients__ingredient %}">
+                                {{ ingredient.ingredients__ingredient }}
+                            </a>({{ ingredient.total }})
+                        </li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         </div>

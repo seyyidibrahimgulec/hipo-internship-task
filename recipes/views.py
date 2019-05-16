@@ -53,7 +53,6 @@ def main_page_view(request, all_recipes: QuerySet):
 
 
 def index(request):
-    # Pagination
     all_recipes = Recipe.objects.all().order_by('-created_time')
     return main_page_view(request, all_recipes)
 
@@ -74,6 +73,11 @@ def search(request):
 
     all_recipes = result_recipes.distinct()
     return main_page_view(request, all_recipes)
+
+
+def ingredient(request, ingredient_value):
+    recipes = Recipe.objects.filter(ingredients__ingredient=ingredient_value)
+    return main_page_view(request, recipes)
 
 
 def recipe_detail(request, pk):
