@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
-from recipes.views import recipe_detail, index, NewRecipe, like_recipe, rate_recipe, search, UpdateRecipe, ingredient
+from recipes.views import recipe_detail, index, NewRecipe, like_recipe, rate_recipe, search, UpdateRecipe, ingredient, DeleteRecipe
 from django.urls import path, include
 from users.views import SignUp
 from django.contrib.auth.decorators import login_required
@@ -31,6 +31,7 @@ urlpatterns = [
     path('search/', search, name='search'),
     path('new_recipe/', login_required(NewRecipe.as_view()), name='new_recipe'),
     path('update_recipe/<int:pk>/', login_required(UpdateRecipe.as_view()), name='update_recipe'),
+    path('delete_recipe/<int:pk>', login_required(DeleteRecipe.as_view()), name='delete_recipe'),
     path('like_recipe/<int:pk>/', like_recipe, name="like_recipe"),
     path('rate_recipe/<int:pk>/', rate_recipe, name="rate_recipe"),
     path('ingredient/<str:ingredient_value>/', ingredient, name='ingredient'),
