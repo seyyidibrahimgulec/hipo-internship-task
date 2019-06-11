@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from recipes.models import Recipe, Like, Rate
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DeleteView
 from recipes.forms import NewRecipesForm
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
@@ -21,6 +21,7 @@ class NewRecipe(CreateView):
         obj.save()
         for ingredient in form.cleaned_data['ingredients']:
             obj.ingredients.add(ingredient)
+
         return redirect(recipe_detail, obj.id)
 
 
@@ -31,6 +32,13 @@ class UpdateRecipe(UpdateView, SameUserOnlyPermission):
     def form_valid(self, form):
         obj = form.save(commit=True)
         return redirect(recipe_detail, obj.id)
+
+
+class DeleteRecipe(DeleteView, SameUserOnlyPermission):
+    model = Recipe
+    template_name = 'recipes/recipe_confirm_delete.html'
+    success_url = '/'
+
 
 
 def main_page_view(request, all_recipes: QuerySet):

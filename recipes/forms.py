@@ -13,3 +13,4 @@ class NewRecipesForm(forms.ModelForm):
         self.fields['description'].widget.attrs['class'] = 'form-control'
         self.fields['difficulty'].widget.attrs['class'] = 'form-control'
         self.fields['ingredients'].widget.attrs['class'] = 'form-control'
+

@@ -16,6 +16,7 @@
                 {{ recipe.created_time|date:"d/m/Y"  }} . {{ recipe.rate_avg }}/5 ({{ recipe.rate_count }}) . {{ recipe.like_count }} likes . by {{ recipe.author }}
                 {% if recipe.author == request.user %}
                     <a href="{% url 'update_recipe' pk=recipe.pk %}">Edit</a>
+                    <a href="{% url 'delete_recipe' pk=recipe.pk %}">Delete</a>
                 {% endif %}
               </div>
             </div>
