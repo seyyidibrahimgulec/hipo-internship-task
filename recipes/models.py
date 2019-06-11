@@ -20,7 +20,6 @@ class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     ingredients = models.ManyToManyField(Ingredient, related_name='recipes', help_text='(Hold down the Ctrl(Windows)/Command(Mac) button to select multiple options) ')
-    view_count = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
