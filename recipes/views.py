@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from recipes.models import Recipe, Like, Rate
+from recipes.models import Recipe, Like, Rate, Ingredient
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.views.generic import CreateView, UpdateView, DeleteView
@@ -7,7 +7,6 @@ from recipes.forms import NewRecipesForm
 from django.contrib.auth.decorators import login_required
 from django.db.models.query import QuerySet
 from django.db.models import Q
-from ingredients.models import Ingredient
 from recipes.permisions import SameUserOnlyPermission
 
 
