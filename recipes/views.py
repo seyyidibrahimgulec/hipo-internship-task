@@ -139,16 +139,10 @@ def like_recipe(request, pk):
 @login_required
 def rate_recipe(request, pk):
     recipe = Recipe.objects.get(id=pk)
-    rate_score = request.GET.get('score')
-
-    try:
-        rate = Rate.objects.get(user=request.user, recipe=recipe)
-        rate.score = rate_score
-        rate.save()
-        return redirect(recipe_detail, recipe.id)
-
-    except Rate.DoesNotExist:
-        Rate.objects.create(user=request.user, recipe=recipe, score=rate_score)
-        return redirect(recipe_detail, recipe.id)
-
+    rate_score = request.POST.get('score')
+    rate, created = Rate.objects.update_or_create(
+        user=request.user, recipe=recipe,
+        defaults={'user': request.user, 'recipe': recipe, 'score': rate_score},
+    )
+    return redirect(recipe_detail, recipe.id)
 
