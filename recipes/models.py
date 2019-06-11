@@ -1,7 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
-from ingredients.models import Ingredient
 from django.db.models import Avg
+
+
+class Ingredient(models.Model):
+    ingredient = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.ingredient
 
 
 class Recipe(models.Model):
@@ -60,4 +66,6 @@ class Rate(models.Model):
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+
+
 
