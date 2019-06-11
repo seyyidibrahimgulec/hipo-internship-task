@@ -62,7 +62,7 @@
       {{ recipe.description }}
     </p>
     {% if request.user.is_authenticated %}
-        <form action="{% url 'rate_recipe' pk=recipe.pk %}" method="get">
+        <form action="{% url 'rate_recipe' pk=recipe.pk %}" method="post">
           {% csrf_token %}
           <select name="score" class="form-control" style="width:50px;">
             <option value="1">1</option>
