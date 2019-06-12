@@ -25,7 +25,11 @@ class Recipe(models.Model):
 
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    ingredients = models.ManyToManyField(Ingredient, related_name='recipes', help_text='(Hold down the Ctrl(Windows)/Command(Mac) button to select multiple options) ')
+    ingredients = models.ManyToManyField(
+        Ingredient, related_name='recipes',
+        help_text='(Hold down the Ctrl(Windows)/Command(Mac) '
+                  'button to select multiple options)'
+    )
 
     def __str__(self):
         return self.title
@@ -65,6 +69,3 @@ class Rate(models.Model):
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-
-
-

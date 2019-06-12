@@ -146,4 +146,3 @@ def rate_recipe(request, pk):
         defaults={'score': rate_score},
     )
     return redirect(recipe_detail, recipe.id)
-
