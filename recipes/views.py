@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from recipes.models import Recipe, Like, Rate, Ingredient
 from django.core.paginator import Paginator
 from django.db.models import Count
@@ -10,7 +10,7 @@ from django.db.models import Q
 from recipes.permisions import SameUserOnlyPermission
 
 
-class NewRecipe(CreateView):
+class NewRecipeView(CreateView):
     model = Recipe
     form_class = NewRecipesForm
 
@@ -24,20 +24,22 @@ class NewRecipe(CreateView):
         return redirect(recipe_detail, obj.id)
 
 
-class UpdateRecipe(UpdateView, SameUserOnlyPermission):
+class UpdateRecipeView(UpdateView, SameUserOnlyPermission):
     model = Recipe
     form_class = NewRecipesForm
 
-    def form_valid(self, form):
-        obj = form.save(commit=True)
-        return redirect(recipe_detail, obj.id)
+    # def form_valid(self, form):
+    #     obj = form.save(commit=True)
+    #     return redirect(recipe_detail, obj.id)
+
+    def get_success_url(self):
+        return reverse('recipe_detail', args=[self.kwargs['pk']])
 
 
-class DeleteRecipe(DeleteView, SameUserOnlyPermission):
+class DeleteRecipeView(DeleteView, SameUserOnlyPermission):
     model = Recipe
     template_name = 'recipes/recipe_confirm_delete.html'
     success_url = '/'
-
 
 
 def main_page_view(request, all_recipes: QuerySet):
