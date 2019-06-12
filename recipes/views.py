@@ -123,31 +123,16 @@ def recipe_detail(request, pk):
 @login_required
 def like_recipe(request, pk):
     recipe = Recipe.objects.get(pk=pk)
-
-    try:
-        like = Like.objects.get(user=request.user, recipe=recipe)
-        return redirect(recipe_detail, recipe.id)
-
-    except Like.DoesNotExist:
-        Like.objects.create(user=request.user, recipe=recipe)
-        return redirect(recipe_detail, recipe.id)
+    like, created = Like.objects.get_or_create(
+        user=request.user, recipe=recipe,
+    )
+    return redirect(recipe_detail, recipe.id)
 
 
 class DeleteLikeView(DeleteView):
     model = Like
     template_name = 'recipes/recipe_confirm_delete.html'
     success_url = '/recipe/{recipe_id}/'
-
-    # def get_success_url(self):
-    #     import pdb
-    #     pdb.set_trace()
-    #
-    #     print("asd")
-    # def delete(self, request, *args, **kwargs):
-    #     like = self.get_object()
-    #     recipe = like.recipe
-    #     like.delete()
-    #     return redirect(recipe_detail, recipe.id)
 
 
 @login_required
