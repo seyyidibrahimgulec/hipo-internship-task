@@ -39,7 +39,6 @@ class DeleteRecipe(DeleteView, SameUserOnlyPermission):
     success_url = '/'
 
 
-
 def main_page_view(request, all_recipes: QuerySet):
     """
     This is a not a standard django view function. This function used for main
@@ -99,8 +98,8 @@ def recipe_detail(request, pk):
     }
 
     if request.user.is_authenticated:
-        is_liked = Like.objects.filter(
-            user=request.user, recipe=recipe).count()
+        like = Like.objects.filter(
+            user=request.user, recipe=recipe).first()
 
         is_rated = Rate.objects.filter(
             user=request.user, recipe=recipe).count()
@@ -111,7 +110,7 @@ def recipe_detail(request, pk):
                 user=request.user, recipe=recipe).score
 
         extra_context = {
-            "is_liked": is_liked,
+            "like": like,
             "is_rated": is_rated,
             "rate_point": rate_point,
         }
@@ -127,12 +126,28 @@ def like_recipe(request, pk):
 
     try:
         like = Like.objects.get(user=request.user, recipe=recipe)
-        like.delete()
         return redirect(recipe_detail, recipe.id)
 
     except Like.DoesNotExist:
         Like.objects.create(user=request.user, recipe=recipe)
         return redirect(recipe_detail, recipe.id)
+
+
+class DeleteLikeView(DeleteView):
+    model = Like
+    template_name = 'recipes/recipe_confirm_delete.html'
+    success_url = '/recipe/{recipe_id}/'
+
+    # def get_success_url(self):
+    #     import pdb
+    #     pdb.set_trace()
+    #
+    #     print("asd")
+    # def delete(self, request, *args, **kwargs):
+    #     like = self.get_object()
+    #     recipe = like.recipe
+    #     like.delete()
+    #     return redirect(recipe_detail, recipe.id)
 
 
 @login_required

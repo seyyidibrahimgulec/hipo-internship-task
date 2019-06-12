@@ -30,18 +30,20 @@
     </p>
 
     {% if request.user.is_authenticated  %}
-      {% if is_liked %}
-          <a href="{% url 'like_recipe' pk=recipe.pk %}">
-              <button type="button" class="btn btn-success">
-                  You Have Liked ({{ recipe.like_count }})
-              </button>
-          </a>
+      {% if like %}
+        <form action="{% url 'delete_like' pk=like.pk %}" method="post">
+        {% csrf_token %}
+          <button type="submit" class="btn btn-success">
+              You Have Liked ({{ recipe.like_count }})
+          </button>
+        </form>
       {% else %}
-          <a href="{% url 'like_recipe' pk=recipe.pk %}">
-              <button type="button" class="btn btn-success">
-                  Like ({{ recipe.like_count }})
-              </button>
-          </a>
+        <form action="{% url 'like_recipe' pk=recipe.pk %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success">
+              Like ({{ recipe.like_count }})
+          </button>
+        </form>
       {% endif %}
     {% endif %}
 
