@@ -131,7 +131,6 @@ def like_recipe(request, pk):
 
 class DeleteLikeView(DeleteView):
     model = Like
-    template_name = 'recipes/recipe_confirm_delete.html'
     success_url = '/recipe/{recipe_id}/'
 
 
@@ -144,4 +143,3 @@ def rate_recipe(request, pk):
         defaults={'score': rate_score},
     )
     return redirect(recipe_detail, recipe.id)
-
