@@ -4,7 +4,7 @@
 from rest_framework import viewsets, generics
 from .models import UserProfile
 from .serializers import UserSerializer, CreateUserSerializer, CustomAuthTokenSerializer
-from users.permisions import IsOwnerIsAdmin
+from users.permisions import IsOwnerIsAdmin, IsOwner
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -38,4 +38,20 @@ class CustomAuthToken(ObtainAuthToken):
 #     form_class = UserCreationForm
 #     success_url = reverse_lazy('login')
 #     template_name = 'registration/signup.html'
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated, IsOwner)
+
+    def get(self, request, *args, **kwargs):
+        token = request.META.get('HTTP_AUTHORIZATION')
+        token = token.replace('Token ', '')
+        user = Token.objects.get(key=token).user
+        return Response({
+            'token': token,
+            'username': user.username,
+            'email': user.email,
+        })
 
