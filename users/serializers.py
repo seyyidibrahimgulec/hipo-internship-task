@@ -64,3 +64,10 @@ class ChangePasswordSerializer(serializers.Serializer):
     def validate_new_password(self, new_password):
         validators.validate_password(new_password)
         return new_password
+
+    def validate_old_password(self, old_password):
+        user = self.context['request'].user
+        if not user.check_password(old_password):
+            msg = ugettext_lazy('Wrong password')
+            raise serializers.ValidationError(msg, code='authorization')
+        return old_password
