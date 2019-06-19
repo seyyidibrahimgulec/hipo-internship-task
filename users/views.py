@@ -1,12 +1,13 @@
 # from django.contrib.auth.forms import UserCreationForm
 # from django.urls import reverse_lazy
 # from django.views import generic
-from rest_framework import generics
-from .serializers import UserSerializer, CreateUserSerializer, CustomAuthTokenSerializer
+from rest_framework import generics, status
+from .serializers import UserSerializer, CreateUserSerializer, CustomAuthTokenSerializer, ChangePasswordSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from users.models import UserProfile
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -34,3 +35,20 @@ class MyProfileDetailView(generics.RetrieveAPIView):
         return self.request.user
 
 
+class ChangePasswordView(generics.UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+    model = UserProfile
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user.set_password(serializer.data.get("new_password"))
+        user.auth_token.delete()
+        user.save()
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key}, status=status.HTTP_200_OK)

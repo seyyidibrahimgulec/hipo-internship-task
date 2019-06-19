@@ -21,13 +21,14 @@ from django.urls import path, include
 # from users.views import SignUp
 # from django.contrib.auth.decorators import login_required
 from rest_framework import routers
-from users.views import UserRegistrationView, UserAuthenticationView, MyProfileDetailView
+from users.views import UserRegistrationView, UserAuthenticationView, MyProfileDetailView, ChangePasswordView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/profiles/create/', UserRegistrationView.as_view(), name='create_user'),
     path('api/profiles/authenticate/', UserAuthenticationView.as_view()),
     path('api/profiles/me/', MyProfileDetailView.as_view()),
+    path('api/profiles/me/change-password/', ChangePasswordView.as_view()),
     # path('', index, name="index"),
     # path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     # path('accounts/', include('django.contrib.auth.urls')),
