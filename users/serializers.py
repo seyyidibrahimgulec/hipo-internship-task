@@ -18,9 +18,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate_password(self, data):
-        validators.validate_password(password=data, user=UserProfile)
-        return data
+    def validate_password(self, password):
+        validators.validate_password(password=password, user=UserProfile)
+        return password
 
     def create(self, validated_data):
         password = validated_data['password']

@@ -1,19 +1,13 @@
 # from django.contrib.auth.forms import UserCreationForm
 # from django.urls import reverse_lazy
 # from django.views import generic
-from rest_framework import viewsets, generics
+from rest_framework import generics
 from .models import UserProfile
 from .serializers import UserSerializer, CreateUserSerializer, CustomAuthTokenSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = UserProfile.objects.all()
-#     serializer_class = UserSerializer
-#     permission_classes = (IsAuthenticated, IsOwnerOrIsAdmin)
 
 
 class UserRegistrationView(generics.CreateAPIView):
