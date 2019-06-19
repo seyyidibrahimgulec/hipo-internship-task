@@ -56,3 +56,11 @@ class CustomAuthTokenSerializer(serializers.Serializer):
         attrs['user'] = user
         return attrs
 
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+    new_password = serializers.CharField(required=True, allow_null=False, allow_blank=False)
+
+    def validate_new_password(self, new_password):
+        validators.validate_password(new_password)
+        return new_password
