@@ -2,7 +2,6 @@
 # from django.urls import reverse_lazy
 # from django.views import generic
 from rest_framework import generics
-from .models import UserProfile
 from .serializers import UserSerializer, CreateUserSerializer, CustomAuthTokenSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -26,11 +25,6 @@ class UserAuthenticationView(ObtainAuthToken):
             'username': user.username,
         })
 
-# class SignUp(generic.CreateView):
-#     form_class = UserCreationForm
-#     success_url = reverse_lazy('login')
-#     template_name = 'registration/signup.html'
-
 
 class MyProfileDetailView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
@@ -39,10 +33,4 @@ class MyProfileDetailView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
-    # def get(self, request, *args, **kwargs):
-    #     user = self.request.user
-    #     return Response({
-    #         'username': user.username,
-    #         'email': user.email,
-    #     })
 
