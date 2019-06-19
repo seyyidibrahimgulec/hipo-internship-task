@@ -21,19 +21,13 @@ from django.urls import path, include
 # from users.views import SignUp
 # from django.contrib.auth.decorators import login_required
 from rest_framework import routers
-from users.views import UserViewSet, UsersView, CustomAuthToken, UserDetail
-from rest_framework.authtoken import views
-
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-
+from users.views import UserRegistrationView, UserAuthenticationView, MyProfileDetailView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
-    path('create_user/', UsersView.as_view(), name='create_user'),
-    path('api_token_auth/', CustomAuthToken.as_view()),
-    path('api/users/me/', UserDetail.as_view()),
+    path('api/profiles/create/', UserRegistrationView.as_view(), name='create_user'),
+    path('api/profiles/authenticate/', UserAuthenticationView.as_view()),
+    path('api/profiles/me/', MyProfileDetailView.as_view()),
     # path('', index, name="index"),
     # path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     # path('accounts/', include('django.contrib.auth.urls')),

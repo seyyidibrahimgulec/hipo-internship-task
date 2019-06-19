@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0002_auto_20190614_1404'),
+        ('users', '0002_add_custom_user_manager'),
     ]
 
     operations = [

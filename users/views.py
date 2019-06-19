@@ -4,25 +4,23 @@
 from rest_framework import viewsets, generics
 from .models import UserProfile
 from .serializers import UserSerializer, CreateUserSerializer, CustomAuthTokenSerializer
-from users.permisions import IsOwnerIsAdmin, IsOwner
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated, IsOwnerIsAdmin)
+# class UserViewSet(viewsets.ModelViewSet):
+#     queryset = UserProfile.objects.all()
+#     serializer_class = UserSerializer
+#     permission_classes = (IsAuthenticated, IsOwnerOrIsAdmin)
 
 
-class UsersView(generics.CreateAPIView):
+class UserRegistrationView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
-    permission_classes = (IsAuthenticated, IsOwnerIsAdmin)
 
 
-class CustomAuthToken(ObtainAuthToken):
+class UserAuthenticationView(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         serializer = CustomAuthTokenSerializer(data=request.data)
@@ -40,18 +38,17 @@ class CustomAuthToken(ObtainAuthToken):
 #     template_name = 'registration/signup.html'
 
 
-class UserDetail(generics.RetrieveAPIView):
-    queryset = UserProfile.objects.all()
+class MyProfileDetailView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated, IsOwner)
+    permission_classes = (IsAuthenticated,)
 
-    def get(self, request, *args, **kwargs):
-        token = request.META.get('HTTP_AUTHORIZATION')
-        token = token.replace('Token ', '')
-        user = Token.objects.get(key=token).user
-        return Response({
-            'token': token,
-            'username': user.username,
-            'email': user.email,
-        })
+    def get_object(self):
+        return self.request.user
+
+    # def get(self, request, *args, **kwargs):
+    #     user = self.request.user
+    #     return Response({
+    #         'username': user.username,
+    #         'email': user.email,
+    #     })
 
