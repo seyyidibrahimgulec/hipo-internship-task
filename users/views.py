@@ -49,7 +49,6 @@ class ChangePasswordView(generics.UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         user.set_password(serializer.data.get("new_password"))
         user.auth_token.delete()
-        token, created = Token.objects.get_or_create(user=user)
         user.save()
+        token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key}, status=status.HTTP_200_OK)
-
