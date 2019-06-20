@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Recipe, Like, Rate, Ingredient
+from .models import Ingredient
 
 
-admin.site.register(Recipe)
-admin.site.register(Like)
-admin.site.register(Rate)
+# admin.site.register(Recipe)
+# admin.site.register(Like)
+# admin.site.register(Rate)
 admin.site.register(Ingredient)
