@@ -181,6 +181,7 @@ class ChangePasswordTestCase(TestCase):
         new_token = Token.objects.get(user=user)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(old_token, new_token)
+        self.assertFalse(Token.objects.filter(key=old_token.key).exists())
 
     def test_incorrect_password_can_change_password(self):
         old_password = 'testuser_1'
