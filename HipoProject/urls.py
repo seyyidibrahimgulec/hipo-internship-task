@@ -26,7 +26,7 @@ from users.views import UserRegistrationView, UserAuthenticationView, MyProfileD
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/profiles/create/', UserRegistrationView.as_view(), name='create_user'),
-    path('api/profiles/authenticate/', UserAuthenticationView.as_view()),
+    path('api/profiles/authenticate/', UserAuthenticationView.as_view(), name='authenticate_user'),
     path('api/profiles/me/', MyProfileDetailView.as_view()),
     path('api/profiles/me/change-password/', ChangePasswordView.as_view()),
     # path('', index, name="index"),
