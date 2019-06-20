@@ -59,3 +59,7 @@ class UserRegistrationTestCase(TestCase):
             format='json'
         )
         self.assertEqual(response.status_code, 400)
+
+
+class UserAuthenticationTestCase(TestCase):
+    pass
