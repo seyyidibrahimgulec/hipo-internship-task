@@ -8,7 +8,7 @@
 # from django.db.models.query import QuerySet
 # from django.db.models import Q
 # from recipes.permisions import SameUserOnlyPermission
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import ListCreateAPIView
 from recipes.serializers import IngredientSerializer
 from recipes.models import Ingredient
 
@@ -151,10 +151,6 @@ from recipes.models import Ingredient
 #     return redirect(recipe_detail, recipe.id)
 
 
-class CreateIngredientView(CreateAPIView):
-    serializer_class = IngredientSerializer
-
-
-class ListIngredientView(ListAPIView):
+class ListCreateIngredientView(ListCreateAPIView):
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()

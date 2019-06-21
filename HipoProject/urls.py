@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 # from recipes.views import recipe_detail, index, NewRecipeView, like_recipe, rate_recipe, search, UpdateRecipeView, ingredient, DeleteRecipeView
 from django.urls import path, include
-from recipes.views import CreateIngredientView, ListIngredientView
+from recipes.views import ListCreateIngredientView
 # from django.contrib.auth.decorators import login_required
 from rest_framework import routers
 from users.views import UserRegistrationView, UserAuthenticationView, MyProfileDetailView, ChangePasswordView
@@ -29,8 +29,7 @@ urlpatterns = [
     path('api/profiles/authenticate/', UserAuthenticationView.as_view()),
     path('api/profiles/me/', MyProfileDetailView.as_view()),
     path('api/profiles/me/change-password/', ChangePasswordView.as_view()),
-    path('api/ingredients/create/', CreateIngredientView.as_view(), name='create_ingredient'),
-    path('api/ingredients/', ListIngredientView.as_view(), name='list_ingredient'),
+    path('api/ingredients/', ListCreateIngredientView.as_view(), name='list_create_ingredient'),
     # path('', index, name="index"),
     # path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     # path('accounts/', include('django.contrib.auth.urls')),
