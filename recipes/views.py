@@ -101,8 +101,8 @@ def recipe_detail(request, pk):
     }
 
     if request.user.is_authenticated:
-        is_liked = Like.objects.filter(
-            user=request.user, recipe=recipe).count()
+        like = Like.objects.filter(
+            user=request.user, recipe=recipe).first()
 
         is_rated = Rate.objects.filter(
             user=request.user, recipe=recipe).count()
@@ -113,7 +113,7 @@ def recipe_detail(request, pk):
                 user=request.user, recipe=recipe).score
 
         extra_context = {
-            "is_liked": is_liked,
+            "like": like,
             "is_rated": is_rated,
             "rate_point": rate_point,
         }
@@ -126,15 +126,15 @@ def recipe_detail(request, pk):
 @login_required
 def like_recipe(request, pk):
     recipe = Recipe.objects.get(pk=pk)
+    like, created = Like.objects.get_or_create(
+        user=request.user, recipe=recipe,
+    )
+    return redirect(recipe_detail, recipe.id)
 
-    try:
-        like = Like.objects.get(user=request.user, recipe=recipe)
-        like.delete()
-        return redirect(recipe_detail, recipe.id)
 
-    except Like.DoesNotExist:
-        Like.objects.create(user=request.user, recipe=recipe)
-        return redirect(recipe_detail, recipe.id)
+class DeleteLikeView(DeleteView):
+    model = Like
+    success_url = '/recipe/{recipe_id}/'
 
 
 @login_required
