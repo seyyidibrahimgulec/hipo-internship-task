@@ -5,7 +5,7 @@ from rest_framework import status
 from recipes.constants import base64image
 from users.models import UserProfile
 from rest_framework.authtoken.models import Token
-from recipes.models import Ingredient
+from recipes.models import Ingredient, Recipe
 
 
 class ListCreateIngredientTestCase(TestCase):
@@ -66,9 +66,6 @@ class ListCreateIngredientTestCase(TestCase):
 
 class ListCreateRecipeTestCase(TestCase):
     url = reverse('list-create-recipe')
-    title = 'test_title'
-    description = 'test_description'
-    difficulty = 'E'
 
     def create_user(self, username='testuser', email='testuser@mail.com'):
         user = UserProfile.objects.create_user(username=username, email=email, password='testuser_1')
@@ -87,8 +84,8 @@ class ListCreateRecipeTestCase(TestCase):
         ingredients.append(ingredient.id)
         return ingredients
 
-    def create_recipe(self, client, title='test_title', description='test_desc', difficulty='E', image=base64image, anyIngredients=True):
-        if anyIngredients:
+    def create_recipe(self, client, title='test_title', description='test_desc', difficulty='E', image=base64image, any_ingredients=True):
+        if any_ingredients:
             ingredients = self.create_ingredients()
         else:
             ingredients = list()
@@ -148,9 +145,105 @@ class ListCreateRecipeTestCase(TestCase):
 
     def test_create_recipe_without_ingredients(self):
         user, client = self.create_user()
-        response = self.create_recipe(client=client, anyIngredients=False)
+        response = self.create_recipe(client=client, any_ingredients=False)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_list_recipe(self):
         response = self.list_recipes()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class RetrieveUpdateDestroyRecipeTestCase(TestCase):
+    def create_user(self, username='testuser', email='testuser@mail.com'):
+        user = UserProfile.objects.create_user(username=username, email=email, password='testuser_1')
+        token, created = Token.objects.get_or_create(user=user)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        return user, client
+
+    def create_ingredients(self, any_update=False):
+        ingredients = list()
+        if not any_update:
+            ingredient = Ingredient.objects.create(name='test_ingredient_1', image=base64image)
+        else:
+            ingredient = Ingredient.objects.create(name='test_ingredient_3', image=base64image)
+        ingredient.save()
+        ingredients.append(ingredient.id)
+        if not any_update:
+            ingredient = Ingredient.objects.create(name='test_ingredient_2', image=base64image)
+        else:
+            ingredient = Ingredient.objects.create(name='test_ingredient_4', image=base64image)
+        ingredient.save()
+        ingredients.append(ingredient.id)
+        return ingredients
+
+    def create_recipe(self, user):
+        ingredients = self.create_ingredients()
+        recipe = Recipe.objects.create(title='test_title', description='test_desc', difficulty='E', image=base64image, author=user)
+        recipe.ingredients.add(ingredients[0])
+        recipe.ingredients.add(ingredients[1])
+        recipe.save()
+        return recipe
+
+    def test_author_can_update_recipe(self):
+        user, client = self.create_user()
+        recipe = self.create_recipe(user=user)
+        ingredient = self.create_ingredients(any_update=True)
+        response = client.put(
+            reverse('rud-recipe', kwargs={'pk': recipe.id}),
+            {
+                'title': 'test', 'description': 'test', 'difficulty': 'E',
+                'image': base64image, 'ingredients': ingredient
+            },
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_non_author_can_update_recipe(self):
+        user_1, client_1 = self.create_user()
+        user_2, client_2 = self.create_user(username='testuser2', email='testuser2@mail.com')
+        recipe = self.create_recipe(user=user_1)
+        ingredient = self.create_ingredients(any_update=True)
+        response = client_2.put(
+            reverse('rud-recipe', kwargs={'pk': recipe.id}),
+            {
+                'title': 'test', 'description': 'test', 'difficulty': 'E',
+                'image': base64image, 'ingredients': ingredient
+            },
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_author_can_destroy_recipe(self):
+        user, client = self.create_user()
+        recipe = self.create_recipe(user=user)
+        response = client.delete(
+            reverse('rud-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_non_author_can_destroy_recipe(self):
+        user_1, client_1 = self.create_user()
+        user_2, client_2 = self.create_user(username='testuser2', email='testuser2@mail.com')
+        recipe = self.create_recipe(user=user_1)
+        response = client_2.delete(
+            reverse('rud-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_author_retrieve_recipe(self):
+        user, client = self.create_user()
+        recipe = self.create_recipe(user=user)
+        response = client.get(
+            reverse('rud-recipe', kwargs={'pk': recipe.id}),
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_non_author_retrieve_recipe(self):
+        user_1, client_1 = self.create_user()
+        user_2, client_2 = self.create_user(username='testuser2', email='testuser2@mail.com')
+        recipe = self.create_recipe(user=user_1)
+        response = client_2.get(
+            reverse('rud-recipe', kwargs={'pk': recipe.id}),
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
