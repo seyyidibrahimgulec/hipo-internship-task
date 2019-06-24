@@ -11,14 +11,11 @@ class ListCreateIngredientTestCase(TestCase):
     url = reverse('list-create-ingredient')
     test_ingredient_name = 'test_ingredient'
 
-    def create_user(self, fail_authenticate=False, username='testuser', email='testuser@mail.com'):
+    def create_user(self, username='testuser', email='testuser@mail.com'):
         user = UserProfile.objects.create_user(username=username, email=email, password='testuser_1')
         token, created = Token.objects.get_or_create(user=user)
         client = APIClient()
-        if not fail_authenticate:
-            client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
-        else:
-            client.credentials(HTTP_AUTHORIZATION='Token ' + token.key + 'fail')
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         return user, client
 
     def create_ingredient(self, name, client):
@@ -43,7 +40,7 @@ class ListCreateIngredientTestCase(TestCase):
         self.assertIsNotNone(response.data.get('image'))
 
     def test_create_ingredient_without_user_authentication(self):
-        user, client = self.create_user(fail_authenticate=True)
+        client = APIClient()
         response = self.create_ingredient(self.test_ingredient_name, client)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
