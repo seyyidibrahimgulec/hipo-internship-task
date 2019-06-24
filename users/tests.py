@@ -79,7 +79,7 @@ class UserAuthenticationTestCase(TestCase):
         'password': 'testuser_1'
     }
 
-    def create_user_and_response(self, email, password):
+    def create_user(self, email, password):
         client = APIClient()
         user = UserProfile.objects.create(username=self.params['username'], email=self.params['email'])
         user.set_password(self.params['password'])
@@ -138,7 +138,7 @@ class MyProfileDetailTestCase(TestCase):
         token, created = Token.objects.get_or_create(user=user)
         return user, token
 
-    def test_user_can_detail(self):
+    def test_retrieve_my_user_detail(self):
         user, token = self.create_user()
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -147,7 +147,7 @@ class MyProfileDetailTestCase(TestCase):
         self.assertEqual(response.data['username'], user.username)
         self.assertEqual(response.data['email'], user.email)
 
-    def test_incorrect_token_can_detail(self):
+    def test_retrieve_my_user_detail_with_incorrect_token(self):
         user, token = self.create_user()
         token.key += 'ABC'
         client = APIClient()
