@@ -11,7 +11,7 @@
 from rest_framework.generics import ListCreateAPIView
 from recipes.serializers import IngredientSerializer
 from recipes.models import Ingredient
-
+from rest_framework import permissions
 
 # class NewRecipeView(CreateView):
 #     model = Recipe
@@ -154,3 +154,4 @@ from recipes.models import Ingredient
 class ListCreateIngredientView(ListCreateAPIView):
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )

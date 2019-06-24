@@ -29,7 +29,7 @@ urlpatterns = [
     path('api/profiles/authenticate/', UserAuthenticationView.as_view()),
     path('api/profiles/me/', MyProfileDetailView.as_view()),
     path('api/profiles/me/change-password/', ChangePasswordView.as_view()),
-    path('api/ingredients/', ListCreateIngredientView.as_view(), name='list_create_ingredient'),
+    path('api/ingredients/', ListCreateIngredientView.as_view(), name='list-create-ingredient'),
     # path('', index, name="index"),
     # path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     # path('accounts/', include('django.contrib.auth.urls')),
