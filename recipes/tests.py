@@ -102,6 +102,13 @@ class ListCreateRecipeTestCase(TestCase):
         )
         return response
 
+    def list_recipes(self):
+        client = APIClient()
+        response = client.get(
+            self.url,
+        )
+        return response
+
     def test_create_recipe_with_authentication(self):
         user, client = self.create_user()
         response = self.create_recipe(client)
@@ -143,3 +150,7 @@ class ListCreateRecipeTestCase(TestCase):
         user, client = self.create_user()
         response = self.create_recipe(client=client, anyIngredients=False)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_list_recipe(self):
+        response = self.list_recipes()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
