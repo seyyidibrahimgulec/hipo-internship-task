@@ -5,6 +5,7 @@ from rest_framework import status
 from recipes.constants import base64image
 from users.models import UserProfile
 from rest_framework.authtoken.models import Token
+from recipes.models import Ingredient
 
 
 class ListCreateIngredientTestCase(TestCase):
@@ -61,3 +62,84 @@ class ListCreateIngredientTestCase(TestCase):
     def test_list_ingredient(self):
         response = self.list_ingredient()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ListCreateRecipeTestCase(TestCase):
+    url = reverse('list-create-recipe')
+    title = 'test_title'
+    description = 'test_description'
+    difficulty = 'E'
+
+    def create_user(self, username='testuser', email='testuser@mail.com'):
+        user = UserProfile.objects.create_user(username=username, email=email, password='testuser_1')
+        token, created = Token.objects.get_or_create(user=user)
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        return user, client
+
+    def create_ingredients(self, name='test_ingredient'):
+        ingredients = list()
+        ingredient = Ingredient.objects.create(name=name, image=base64image)
+        ingredient.save()
+        ingredients.append(ingredient.id)
+        ingredient = Ingredient.objects.create(name='test_ingredient_2', image=base64image)
+        ingredient.save()
+        ingredients.append(ingredient.id)
+        return ingredients
+
+    def create_recipe(self, client, title='test_title', description='test_desc', difficulty='E', image=base64image, anyIngredients=True):
+        if anyIngredients:
+            ingredients = self.create_ingredients()
+        else:
+            ingredients = list()
+        response = client.post(
+            self.url,
+            {
+                'title': title, 'description': description, 'difficulty': difficulty,
+                'ingredients': ingredients, 'image': image
+            },
+            format='json'
+        )
+        return response
+
+    def test_create_recipe_with_authentication(self):
+        user, client = self.create_user()
+        response = self.create_recipe(client)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data.get('id'))
+
+    def test_create_recipe_without_authentication(self):
+        client = APIClient()
+        response = self.create_recipe(client)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_recipe_without_title(self):
+        user, client = self.create_user()
+        response = self.create_recipe(client=client, title=None)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_recipe_without_description(self):
+        user, client = self.create_user()
+        response = self.create_recipe(client=client, description=None)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_recipe_without_difficulty(self):
+        user, client = self.create_user()
+        response = self.create_recipe(client=client, difficulty=None)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_recipe_with_incorrect_difficulty(self):
+        user, client = self.create_user()
+        response = self.create_recipe(client=client, difficulty='A')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_recipe_without_image(self):
+        user, client = self.create_user()
+        response = self.create_recipe(client=client, image='')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data.get('id'))
+
+    def test_create_recipe_without_ingredients(self):
+        user, client = self.create_user()
+        response = self.create_recipe(client=client, anyIngredients=False)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
