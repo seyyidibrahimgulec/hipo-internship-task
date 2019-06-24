@@ -7,7 +7,7 @@ from rest_framework import status
 
 
 class UserRegistrationTestCase(TestCase):
-    url = reverse('create_user')
+    url = reverse('create-user')
 
     def test_user_can_register(self):
         client = APIClient()
@@ -72,7 +72,7 @@ class UserRegistrationTestCase(TestCase):
 
 
 class UserAuthenticationTestCase(TestCase):
-    url = reverse('authenticate_user')
+    url = reverse('authenticate-user')
     params = {
         'username': 'testuser',
         'email': 'testuser@mail.com',
@@ -92,44 +92,44 @@ class UserAuthenticationTestCase(TestCase):
         return user, response
 
     def test_user_can_authenticate(self):
-        user, response = self.create_user_and_response(self.params['email'], self.params['password'])
+        user, response = self.create_user(self.params['email'], self.params['password'])
         token = Token.objects.get(user=user)
         self.assertEqual(response.data.get('token'), token.key)
         self.assertEqual(response.data.get('username'), user.username)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_incorrect_email_can_authenticate(self):
-        user, response = self.create_user_and_response('testuser@email.com', self.params['password'])
+        user, response = self.create_user('testuser@email.com', self.params['password'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_invalid_email_can_authenticate(self):
-        user, response = self.create_user_and_response('testuseremailcom', self.params['password'])
+        user, response = self.create_user('testuseremailcom', self.params['password'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_blank_email_can_authenticate(self):
-        user, response = self.create_user_and_response('', self.params['password'])
+        user, response = self.create_user('', self.params['password'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_no_email_can_authenticate(self):
-        user, response = self.create_user_and_response(email=None, password=self.params['password'])
+        user, response = self.create_user(email=None, password=self.params['password'])
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_incorrect_password_can_authenticate(self):
         password = self.params['password'] + '----'
-        user, response = self.create_user_and_response(self.params['email'], password)
+        user, response = self.create_user(self.params['email'], password)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_blank_password_can_authenticate(self):
-        user, response = self.create_user_and_response(self.params['email'], '')
+        user, response = self.create_user(self.params['email'], '')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_no_password_can_authenticate(self):
-        user, response = self.create_user_and_response(email=self.params['email'], password=None)
+        user, response = self.create_user(email=self.params['email'], password=None)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class MyProfileDetailTestCase(TestCase):
-    url = reverse('profile_detail')
+    url = reverse('my-profile-detail')
 
     def create_user(self):
         user = UserProfile.objects.create(username='testuser', email='testuser@mail.com')
@@ -157,7 +157,7 @@ class MyProfileDetailTestCase(TestCase):
 
 
 class ChangePasswordTestCase(TestCase):
-    url = reverse('change_password')
+    url = reverse('change-password')
 
     def create_user_and_client(self, password):
         user = UserProfile.objects.create(username='testuser', email='testuser@mail.com')
