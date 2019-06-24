@@ -28,10 +28,10 @@ from users.views import UserRegistrationView, UserAuthenticationView, MyProfileD
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/profiles/create/', UserRegistrationView.as_view(), name='create_user'),
-    path('api/profiles/authenticate/', UserAuthenticationView.as_view()),
-    path('api/profiles/me/', MyProfileDetailView.as_view()),
-    path('api/profiles/me/change-password/', ChangePasswordView.as_view()),
+    path('api/profiles/create/', UserRegistrationView.as_view(), name='create-user'),
+    path('api/profiles/authenticate/', UserAuthenticationView.as_view(), name='authenticate-user'),
+    path('api/profiles/me/', MyProfileDetailView.as_view(), name='my-profile-detail'),
+    path('api/profiles/me/change-password/', ChangePasswordView.as_view(), name='change-password'),
     # path('', index, name="index"),
     # path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     # path('accounts/', include('django.contrib.auth.urls')),
