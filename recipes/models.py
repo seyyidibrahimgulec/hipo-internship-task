@@ -66,6 +66,3 @@ class Ingredient(models.Model):
 # class Like(models.Model):
 #     user = models.ForeignKey(User, on_delete=models.CASCADE)
 #     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-
-
-
