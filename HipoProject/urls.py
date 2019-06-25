@@ -21,7 +21,7 @@ from django.conf import settings
 #                            DeleteRecipeView
 #                            )
 from django.urls import path
-from recipes.views import ListCreateIngredientView
+from recipes.views import ListCreateIngredientView, ListCreateRecipeView, RecipeDetailView
 # from django.contrib.auth.decorators import login_required
 from users.views import UserRegistrationView, UserAuthenticationView, MyProfileDetailView, ChangePasswordView
 
@@ -32,6 +32,8 @@ urlpatterns = [
     path('api/profiles/me/', MyProfileDetailView.as_view(), name='my-profile-detail'),
     path('api/profiles/me/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('api/ingredients/', ListCreateIngredientView.as_view(), name='list-create-ingredient'),
+    path('api/recipes/', ListCreateRecipeView.as_view(), name='list-create-recipe'),
+    path('api/recipes/<int:pk>/', RecipeDetailView.as_view(), name='recipe-detail')
     # path('', index, name="index"),
     # path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     # path('accounts/', include('django.contrib.auth.urls')),

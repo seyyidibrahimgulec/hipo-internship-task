@@ -8,10 +8,11 @@
 # from django.db.models.query import QuerySet
 # from django.db.models import Q
 # from recipes.permisions import SameUserOnlyPermission
-from rest_framework.generics import ListCreateAPIView
-from recipes.serializers import IngredientSerializer
-from recipes.models import Ingredient
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from recipes.serializers import IngredientSerializer, RecipeSerializer
+from recipes.models import Ingredient, Recipe
 from rest_framework import permissions
+from users.permisions import IsOwnerOrIsAdmin
 
 # class NewRecipeView(CreateView):
 #     model = Recipe
@@ -155,3 +156,23 @@ class ListCreateIngredientView(ListCreateAPIView):
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+
+
+class ListCreateRecipeView(ListCreateAPIView):
+    serializer_class = RecipeSerializer
+    queryset = Recipe.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+class RecipeDetailView(RetrieveUpdateDestroyAPIView):
+    serializer_class = RecipeSerializer
+    queryset = Recipe.objects.all()
+    permission_classes = (IsOwnerOrIsAdmin, )
+
+    def get_permissions(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return ()
+        return super(RecipeDetailView, self).get_permissions()
