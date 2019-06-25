@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import UserProfile
 from django.db.models import Avg
+from django.utils import timezone
 
 
 class Ingredient(models.Model):
@@ -18,15 +19,15 @@ class Recipe(models.Model):
         ('H', 'Hard'),
     )
 
-    title = models.CharField(max_length=300)
-    description = models.TextField()
-    difficulty = models.CharField(max_length=1, choices=DIFFICULTIES)
-    created_time = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField()
+    title = models.CharField(max_length=300, blank=False, null=False)
+    description = models.TextField(blank=False, null=False)
+    difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, blank=False, null=False)
+    date_created = models.DateTimeField(default=timezone.now, blank=False, null=False)
+    image = models.ImageField(null=True, blank=True)
 
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
-    ingredients = models.ManyToManyField(Ingredient, related_name='recipes', help_text='(Hold down the Ctrl(Windows)/Command(Mac) button to select multiple options) ')
+    ingredients = models.ManyToManyField(Ingredient, related_name='recipes', blank=False, help_text='(Hold down the Ctrl(Windows)/Command(Mac) button to select multiple options) ')
 
     def __str__(self):
         return self.title

@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from recipes.models import Ingredient, Recipe
 from drf_extra_fields.fields import Base64ImageField
+from drf_extra_fields.relations import PresentablePrimaryKeyRelatedField
+from users.serializers import UserSerializer
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -13,7 +15,8 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False)
-    author = serializers.ReadOnlyField(source='author.username')
+    author = PresentablePrimaryKeyRelatedField(presentation_serializer=UserSerializer, read_only=True)
+    ingredients = PresentablePrimaryKeyRelatedField(presentation_serializer=IngredientSerializer, queryset=Ingredient.objects.all(), many=True)
 
     class Meta:
         model = Recipe
