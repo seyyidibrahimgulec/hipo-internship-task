@@ -173,6 +173,6 @@ class RecipeDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrIsAdmin, )
 
     def get_permissions(self):
-        if self.request.method == 'GET':
+        if self.request.method in permissions.SAFE_METHODS:
             return ()
-        return [permission() for permission in self.permission_classes]
+        return super(RecipeDetailView, self).get_permissions()
