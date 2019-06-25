@@ -8,11 +8,15 @@
 # from django.db.models.query import QuerySet
 # from django.db.models import Q
 # from recipes.permisions import SameUserOnlyPermission
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from recipes.serializers import IngredientSerializer, RecipeSerializer
-from recipes.models import Ingredient, Recipe
-from rest_framework import permissions
+from recipes.models import Ingredient, Recipe, Like
+from rest_framework import permissions, status
 from users.permisions import IsOwnerOrIsAdmin
+from rest_framework.response import Response
+from users.serializers import UserSerializer
+from django.shortcuts import get_object_or_404
+from users.models import UserProfile
 
 # class NewRecipeView(CreateView):
 #     model = Recipe
@@ -176,3 +180,24 @@ class RecipeDetailView(RetrieveUpdateDestroyAPIView):
         if self.request.method in permissions.SAFE_METHODS:
             return ()
         return super(RecipeDetailView, self).get_permissions()
+
+
+class LikeDetailView(ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def get_object(self):
+        return get_object_or_404(Recipe.objects.all(), pk=self.kwargs.get('pk'))
+
+    def get_queryset(self):
+        return UserProfile.objects.filter(likes__recipe=self.get_object()).distinct()
+
+    def post(self, request, *args, **kwargs):
+        recipe = self.get_object()
+        Like.objects.get_or_create(recipe=recipe, user=self.request.user)
+        return Response(status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        recipe = self.get_object()
+        Like.objects.filter(recipe=recipe, user=self.request.user).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
