@@ -16,7 +16,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(required=False)
     author = PresentablePrimaryKeyRelatedField(presentation_serializer=UserSerializer, read_only=True)
-    ingredients = PresentablePrimaryKeyRelatedField(presentation_serializer=IngredientSerializer, queryset=Ingredient.objects.all(), many=True)
+    ingredients = PresentablePrimaryKeyRelatedField(
+        presentation_serializer=IngredientSerializer, queryset=Ingredient.objects.all(),
+        many=True, allow_empty=False
+    )
 
     class Meta:
         model = Recipe

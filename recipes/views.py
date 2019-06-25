@@ -167,7 +167,12 @@ class ListCreateRecipeView(ListCreateAPIView):
         serializer.save(author=self.request.user)
 
 
-class RetrieveUpdateDestroyRecipeView(RetrieveUpdateDestroyAPIView):
+class RecipeDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
-    permission_classes = (permissions.IsAuthenticated, IsOwnerOrIsAdmin)
+    permission_classes = (IsOwnerOrIsAdmin, )
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return ()
+        return [permission() for permission in self.permission_classes]
