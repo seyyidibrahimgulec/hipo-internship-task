@@ -5,7 +5,7 @@ from rest_framework import status
 from recipes.constants import base64image
 from users.models import UserProfile
 from rest_framework.authtoken.models import Token
-from recipes.models import Ingredient, Recipe
+from recipes.models import Ingredient, Recipe, Like
 import uuid
 
 
@@ -37,6 +37,13 @@ class BaseTestCase(TestCase):
         client = APIClient()
         client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
         return user, client
+
+    def create_recipe(self, user):
+        ingredients = self.create_ingredients()
+        recipe = Recipe.objects.create(title='test_title', description='test_desc', difficulty='E', image=base64image, author=user)
+        recipe.ingredients.add(ingredients[0])
+        recipe.ingredients.add(ingredients[1])
+        return recipe
 
 
 class ListCreateIngredientTestCase(BaseTestCase):
@@ -170,15 +177,6 @@ class ListCreateRecipeTestCase(BaseTestCase):
 
 
 class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
-
-    def create_recipe(self, user):
-        ingredients = self.create_ingredients()
-        recipe = Recipe.objects.create(title='test_title', description='test_desc', difficulty='E', image=base64image, author=user)
-        recipe.ingredients.add(ingredients[0])
-        recipe.ingredients.add(ingredients[1])
-        recipe.save()
-        return recipe
-
     def test_author_can_update_recipe(self):
         user, client = self.create_user()
         recipe = self.create_recipe(user=user)
@@ -288,3 +286,63 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
             reverse('recipe-detail', kwargs={'pk': recipe.id})
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class LikeDetailTestCase(BaseTestCase):
+    def create_like(self, user, recipe):
+        return Like.objects.create(user=user, recipe=recipe)
+
+    def test_user_can_like_recipe(self):
+        user, client = self.create_user()
+        recipe = self.create_recipe(user=user)
+        response = client.post(
+            reverse('like-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(recipe.likes.first())
+
+    def test_non_user_can_like_recipe(self):
+        user, user_client = self.create_user()
+        client = APIClient()
+        recipe = self.create_recipe(user=user)
+        response = client.post(
+            reverse('like-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_can_list_like_of_recipes(self):
+        user, client = self.create_user()
+        recipe = self.create_recipe(user=user)
+        response = client.get(
+            reverse('like-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_non_user_can_list_like_of_recipes(self):
+        user, user_client = self.create_user()
+        client = APIClient()
+        recipe = self.create_recipe(user=user)
+        response = client.get(
+            reverse('like-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_can_unlike_recipe(self):
+        user, client = self.create_user()
+        recipe = self.create_recipe(user=user)
+        self.create_like(user=user, recipe=recipe)
+        response = client.delete(
+            reverse('like-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertIsNone(recipe.likes.first())
+
+    def test_non_user_unlike_recipe(self):
+        user, user_client = self.create_user()
+        client = APIClient()
+        recipe = self.create_recipe(user=user)
+        self.create_like(user=user, recipe=recipe)
+        response = client.delete(
+            reverse('like-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
