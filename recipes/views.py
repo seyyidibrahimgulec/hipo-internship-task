@@ -210,27 +210,12 @@ class ListCreateDeleteLikesView(ListAPIView):
 
 
 class CreateUpdateRatesView(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
     def get_object(self):
         return get_object_or_404(Recipe.objects.all(), pk=self.kwargs.get('pk'))
 
-    def get_permissions(self):
-        if self.request.method == 'post':
-            return (permissions.IsAuthenticated, )
-        elif self.request.method == 'put' or self.request.method == 'patch':
-            return (IsOwnerOrIsAdmin, )
-        return super(CreateUpdateRatesView, self).get_permissions()
-
     def post(self, request, *args, **kwargs):
-        recipe = self.get_object()
-        Rate.objects.get_or_create(recipe=recipe, user=self.request.user, defaults={'score': self.request.data['score']})
-        return Response(status=status.HTTP_200_OK)
-
-    def put(self, request, *args, **kwargs):
-        recipe = self.get_object()
-        Rate.objects.update_or_create(recipe=recipe, user=self.request.user, defaults={'score': self.request.data['score']})
-        return Response(status=status.HTTP_200_OK)
-
-    def patch(self, request, *args, **kwargs):
         recipe = self.get_object()
         Rate.objects.update_or_create(recipe=recipe, user=self.request.user, defaults={'score': self.request.data['score']})
         return Response(status=status.HTTP_200_OK)

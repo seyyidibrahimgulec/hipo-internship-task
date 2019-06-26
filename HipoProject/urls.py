@@ -21,9 +21,8 @@ from django.conf import settings
 #                            DeleteRecipeView
 #                            )
 from django.urls import path
-from recipes.views import (ListCreateIngredientView, ListCreateRecipeView, RecipeDetailView,
-                           ListCreateDeleteLikesView, CreateUpdateRatesView
-                           )
+from recipes.views import ListCreateIngredientView, ListCreateRecipeView, RecipeDetailView, \
+    ListCreateDeleteLikesView, CreateUpdateRatesView
 # from django.contrib.auth.decorators import login_required
 from users.views import UserRegistrationView, UserAuthenticationView, MyProfileDetailView, ChangePasswordView
 
