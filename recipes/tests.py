@@ -399,7 +399,7 @@ class CreateUpdateRatesTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_can_userA_update_userBs_rate(self):
+    def test_can_user_update_other_users_rate(self):
         user_a, user_a_client = self.create_user()
         user_b, user_b_client = self.create_user()
         recipe = self.create_recipe(user=user_a)
