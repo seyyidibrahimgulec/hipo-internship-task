@@ -288,10 +288,7 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class LikeDetailTestCase(BaseTestCase):
-    def create_like(self, user, recipe):
-        return Like.objects.create(user=user, recipe=recipe)
-
+class ListCreateDeleteLikesTestCase(BaseTestCase):
     def test_user_can_like_recipe(self):
         user, client = self.create_user()
         recipe = self.create_recipe(user=user)
@@ -300,6 +297,7 @@ class LikeDetailTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(recipe.likes.first())
+        self.assertEqual(user, recipe.likes.first().user)
 
     def test_non_user_can_like_recipe(self):
         user, user_client = self.create_user()
@@ -325,23 +323,27 @@ class LikeDetailTestCase(BaseTestCase):
         response = client.get(
             reverse('like-recipe', kwargs={'pk': recipe.id})
         )
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_unlike_recipe(self):
         user, client = self.create_user()
         recipe = self.create_recipe(user=user)
-        self.create_like(user=user, recipe=recipe)
+        Like.objects.create(user=user, recipe=recipe)
         response = client.delete(
             reverse('like-recipe', kwargs={'pk': recipe.id})
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertIsNone(recipe.likes.first())
+        response = client.delete(
+            reverse('like-recipe', kwargs={'pk': recipe.id})
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_non_user_unlike_recipe(self):
         user, user_client = self.create_user()
         client = APIClient()
         recipe = self.create_recipe(user=user)
-        self.create_like(user=user, recipe=recipe)
+        Like.objects.create(user=user, recipe=recipe)
         response = client.delete(
             reverse('like-recipe', kwargs={'pk': recipe.id})
         )

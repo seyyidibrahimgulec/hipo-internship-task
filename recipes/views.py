@@ -182,7 +182,7 @@ class RecipeDetailView(RetrieveUpdateDestroyAPIView):
         return super(RecipeDetailView, self).get_permissions()
 
 
-class LikeDetailView(ListAPIView):
+class ListCreateDeleteLikesView(ListAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated, )
 
@@ -201,3 +201,8 @@ class LikeDetailView(ListAPIView):
         recipe = self.get_object()
         Like.objects.filter(recipe=recipe, user=self.request.user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_permissions(self):
+        if self.request.method in permissions.SAFE_METHODS:
+            return ()
+        return super(ListCreateDeleteLikesView, self).get_permissions()
