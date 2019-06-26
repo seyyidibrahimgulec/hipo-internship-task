@@ -65,5 +65,5 @@ class Rate(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserProfile, related_name='likes', on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, related_name='likes', on_delete=models.CASCADE)
