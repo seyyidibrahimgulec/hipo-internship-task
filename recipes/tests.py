@@ -5,7 +5,7 @@ from rest_framework import status
 from recipes.constants import base64image
 from users.models import UserProfile
 from rest_framework.authtoken.models import Token
-from recipes.models import Ingredient, Recipe, Like
+from recipes.models import Ingredient, Recipe, Like, Rate
 import uuid
 
 
@@ -348,3 +348,66 @@ class ListCreateDeleteLikesTestCase(BaseTestCase):
             reverse('like-recipe', kwargs={'pk': recipe.id})
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class CreateUpdateRatesTestCase(BaseTestCase):
+    def test_can_user_create_rate_to_recipe(self):
+        user, client = self.create_user()
+        recipe = self.create_recipe(user=user)
+        score = 5
+        response = client.post(
+            reverse('rate-recipe', kwargs={'pk': recipe.id}),
+            {'score': score}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Rate.objects.filter(user=user, recipe=recipe, score=score).exists())
+
+    def test_can_non_user_create_rate_to_recipe(self):
+        user, user_client = self.create_user()
+        client = APIClient()
+        recipe = self.create_recipe(user=user)
+        score = 5
+        response = client.post(
+            reverse('rate-recipe', kwargs={'pk': recipe.id}),
+            {'score': score}
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_can_user_update_rate_to_recipe(self):
+        user, client = self.create_user()
+        recipe = self.create_recipe(user=user)
+        old_score = 5
+        new_score = 3
+        Rate.objects.create(recipe=recipe, user=user, score=old_score)
+        response = client.post(
+            reverse('rate-recipe', kwargs={'pk': recipe.id}),
+            {'score': new_score}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Rate.objects.filter(user=user, recipe=recipe, score=new_score).exists())
+
+    def test_can_non_user_update_rate_to_recipe(self):
+        user, user_client = self.create_user()
+        client = APIClient()
+        recipe = self.create_recipe(user=user)
+        old_score = 5
+        new_score = 3
+        Rate.objects.create(recipe=recipe, user=user, score=old_score)
+        response = client.post(
+            reverse('rate-recipe', kwargs={'pk': recipe.id}),
+            {'score': new_score}
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_can_user_update_other_users_rate(self):
+        user_a, user_a_client = self.create_user()
+        user_b, user_b_client = self.create_user()
+        recipe = self.create_recipe(user=user_a)
+        old_score = 5
+        new_score = 3
+        Rate.objects.create(recipe=recipe, user=user_a, score=old_score)
+        user_b_client.post(
+            reverse('rate-recipe', kwargs={'pk': recipe.id}),
+            {'score': new_score}
+        )
+        self.assertEqual(Rate.objects.get(user=user_a, recipe=recipe).score, old_score)
