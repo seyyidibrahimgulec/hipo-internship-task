@@ -10,13 +10,14 @@
 # from recipes.permisions import SameUserOnlyPermission
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from recipes.serializers import IngredientSerializer, RecipeSerializer
-from recipes.models import Ingredient, Recipe, Like
+from recipes.models import Ingredient, Recipe, Like, Rate
 from rest_framework import permissions, status
 from users.permisions import IsOwnerOrIsAdmin
 from rest_framework.response import Response
 from users.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
 from users.models import UserProfile
+from rest_framework.views import APIView
 
 # class NewRecipeView(CreateView):
 #     model = Recipe
@@ -206,3 +207,30 @@ class ListCreateDeleteLikesView(ListAPIView):
         if self.request.method in permissions.SAFE_METHODS:
             return ()
         return super(ListCreateDeleteLikesView, self).get_permissions()
+
+
+class CreateUpdateRatesView(APIView):
+    def get_object(self):
+        return get_object_or_404(Recipe.objects.all(), pk=self.kwargs.get('pk'))
+
+    def get_permissions(self):
+        if self.request.method == 'post':
+            return (permissions.IsAuthenticated, )
+        elif self.request.method == 'put' or self.request.method == 'patch':
+            return (IsOwnerOrIsAdmin, )
+        return super(CreateUpdateRatesView, self).get_permissions()
+
+    def post(self, request, *args, **kwargs):
+        recipe = self.get_object()
+        Rate.objects.get_or_create(recipe=recipe, user=self.request.user, defaults={'score': self.request.data['score']})
+        return Response(status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        recipe = self.get_object()
+        Rate.objects.update_or_create(recipe=recipe, user=self.request.user, defaults={'score': self.request.data['score']})
+        return Response(status=status.HTTP_200_OK)
+
+    def patch(self, request, *args, **kwargs):
+        recipe = self.get_object()
+        Rate.objects.update_or_create(recipe=recipe, user=self.request.user, defaults={'score': self.request.data['score']})
+        return Response(status=status.HTTP_200_OK)
