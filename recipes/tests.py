@@ -360,8 +360,7 @@ class CreateUpdateRatesTestCase(BaseTestCase):
             {'score': score}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Rate.objects.first().score, score)
-        self.assertEqual(Rate.objects.first().user, user)
+        self.assertTrue(Rate.objects.filter(user=user, recipe=recipe, score=score).exists())
 
     def test_can_non_user_create_rate_to_recipe(self):
         user, user_client = self.create_user()
@@ -385,8 +384,7 @@ class CreateUpdateRatesTestCase(BaseTestCase):
             {'score': new_score}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Rate.objects.first().score, new_score)
-        self.assertEqual(Rate.objects.first().user, user)
+        self.assertTrue(Rate.objects.filter(user=user, recipe=recipe, score=new_score).exists())
 
     def test_can_non_user_update_rate_to_recipe(self):
         user, user_client = self.create_user()
@@ -400,3 +398,16 @@ class CreateUpdateRatesTestCase(BaseTestCase):
             {'score': new_score}
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_can_userA_update_userBs_rate(self):
+        user_a, user_a_client = self.create_user()
+        user_b, user_b_client = self.create_user()
+        recipe = self.create_recipe(user=user_a)
+        old_score = 5
+        new_score = 3
+        Rate.objects.create(recipe=recipe, user=user_a, score=old_score)
+        user_b_client.post(
+            reverse('rate-recipe', kwargs={'pk': recipe.id}),
+            {'score': new_score}
+        )
+        self.assertEqual(Rate.objects.get(user=user_a, recipe=recipe).score, old_score)
