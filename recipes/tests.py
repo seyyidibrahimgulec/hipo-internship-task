@@ -349,6 +349,29 @@ class ListCreateDeleteLikesTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_like_count(self):
+        user_1, user_1_client = self.create_user()
+        user_2, user_2_client = self.create_user()
+        recipe = self.create_recipe(user=user_1)
+        Like.objects.create(user=user_1, recipe=recipe)
+        response = user_1_client.get(
+            reverse('list-create-recipe')
+        )
+        self.assertEqual(response.data['results'][0]['like_count'], 1)
+        response = user_1_client.get(
+            reverse('recipe-detail', kwargs={'pk': recipe.pk})
+        )
+        self.assertEqual(response.data['like_count'], 1)
+        Like.objects.create(user=user_2, recipe=recipe)
+        response = user_1_client.get(
+            reverse('list-create-recipe')
+        )
+        self.assertEqual(response.data['results'][0]['like_count'], 2)
+        response = user_1_client.get(
+            reverse('recipe-detail', kwargs={'pk': recipe.pk})
+        )
+        self.assertEqual(response.data['like_count'], 2)
+
 
 class CreateUpdateRatesTestCase(BaseTestCase):
     def test_can_user_create_rate_to_recipe(self):
@@ -411,3 +434,33 @@ class CreateUpdateRatesTestCase(BaseTestCase):
             {'score': new_score}
         )
         self.assertEqual(Rate.objects.get(user=user_a, recipe=recipe).score, old_score)
+
+    def test_rate_count_and_average_rate(self):
+        user_1, user_1_client = self.create_user()
+        user_2, user_2_client = self.create_user()
+        recipe = self.create_recipe(user=user_1)
+        score_1 = 4
+        score_2 = 2
+        average = (score_1 + score_2) / 2
+        Rate.objects.create(user=user_1, recipe=recipe, score=score_1)
+        response = user_1_client.get(
+            reverse('list-create-recipe')
+        )
+        self.assertEqual(response.data['results'][0]['rate_count'], 1)
+        self.assertEqual(response.data['results'][0]['average_rate'], score_1)
+        response = user_1_client.get(
+            reverse('recipe-detail', kwargs={'pk': recipe.pk})
+        )
+        self.assertEqual(response.data['rate_count'], 1)
+        self.assertEqual(response.data['average_rate'], score_1)
+        Rate.objects.create(user=user_2, recipe=recipe, score=score_2)
+        response = user_1_client.get(
+            reverse('list-create-recipe')
+        )
+        self.assertEqual(response.data['results'][0]['rate_count'], 2)
+        self.assertEqual(response.data['results'][0]['average_rate'], average)
+        response = user_1_client.get(
+            reverse('recipe-detail', kwargs={'pk': recipe.pk})
+        )
+        self.assertEqual(response.data['rate_count'], 2)
+        self.assertEqual(response.data['average_rate'], average)
