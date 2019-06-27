@@ -11,6 +11,11 @@ class Ingredient(models.Model):
         return self.name
 
 
+class Image(models.Model):
+    name = models.CharField(max_length=100)
+    image = models.ImageField()
+
+
 class Recipe(models.Model):
     DIFFICULTIES = (
         ('E', 'Easy'),
@@ -22,7 +27,7 @@ class Recipe(models.Model):
     description = models.TextField(blank=False, null=False)
     difficulty = models.CharField(max_length=1, choices=DIFFICULTIES, blank=False, null=False)
     date_created = models.DateTimeField(default=timezone.now, blank=False, null=False)
-    image = models.ImageField(null=True, blank=True)
+    images = models.ManyToManyField(Image, related_name='recipes', blank=False)
 
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 

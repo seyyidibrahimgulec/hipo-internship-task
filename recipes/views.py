@@ -9,8 +9,8 @@
 # from django.db.models import Q
 # from recipes.permisions import SameUserOnlyPermission
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
-from recipes.serializers import IngredientSerializer, RecipeSerializer
-from recipes.models import Ingredient, Recipe, Like, Rate
+from recipes.serializers import IngredientSerializer, RecipeSerializer, ImageSerializer
+from recipes.models import Ingredient, Recipe, Like, Rate, Image
 from rest_framework import permissions, status
 from users.permisions import IsOwnerOrIsAdmin
 from rest_framework.response import Response
@@ -229,3 +229,9 @@ class CreateUpdateRatesView(APIView):
         recipe = self.get_object()
         Rate.objects.update_or_create(recipe=recipe, user=self.request.user, defaults={'score': self.request.data['score']})
         return Response(status=status.HTTP_200_OK)
+
+
+class ListCreateImageView(ListCreateAPIView):
+    serializer_class = ImageSerializer
+    queryset = Image.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )

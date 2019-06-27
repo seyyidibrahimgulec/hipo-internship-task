@@ -22,7 +22,7 @@ from django.conf import settings
 #                            )
 from django.urls import path
 from recipes.views import ListCreateIngredientView, ListCreateRecipeView, RecipeDetailView, \
-    ListCreateDeleteLikesView, CreateUpdateRatesView
+    ListCreateDeleteLikesView, CreateUpdateRatesView, ListCreateImageView
 # from django.contrib.auth.decorators import login_required
 from users.views import UserRegistrationView, UserAuthenticationView, MyProfileDetailView, ChangePasswordView
 
@@ -37,6 +37,7 @@ urlpatterns = [
     path('api/recipes/<int:pk>/', RecipeDetailView.as_view(), name='recipe-detail'),
     path('api/recipes/<int:pk>/likes/', ListCreateDeleteLikesView.as_view(), name='like-recipe'),
     path('api/recipes/<int:pk>/rates/', CreateUpdateRatesView.as_view(), name='rate-recipe'),
+    path('api/images/', ListCreateImageView.as_view(), name='list-create-image')
     # path('', index, name="index"),
     # path('recipe/<int:pk>/', recipe_detail, name='recipe_detail'),
     # path('accounts/', include('django.contrib.auth.urls')),
