@@ -18,6 +18,8 @@ from users.serializers import UserSerializer
 from django.shortcuts import get_object_or_404
 from users.models import UserProfile
 from rest_framework.views import APIView
+from django.db.models import Value, Avg, Count
+from django.db.models.functions import Coalesce
 
 # class NewRecipeView(CreateView):
 #     model = Recipe
@@ -165,7 +167,11 @@ class ListCreateIngredientView(ListCreateAPIView):
 
 class ListCreateRecipeView(ListCreateAPIView):
     serializer_class = RecipeSerializer
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().annotate(
+        average_rate=Coalesce(Avg('rates__score'), Value(0)),
+        like_count=Count('likes', distinct=True),
+        rate_count=Count('rates', distinct=True),
+    )
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
     def perform_create(self, serializer):
@@ -174,7 +180,11 @@ class ListCreateRecipeView(ListCreateAPIView):
 
 class RecipeDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = RecipeSerializer
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().annotate(
+        average_rate=Coalesce(Avg('rates__score'), Value(0)),
+        like_count=Count('likes', distinct=True),
+        rate_count=Count('rates', distinct=True),
+    )
     permission_classes = (IsOwnerOrIsAdmin, )
 
     def get_permissions(self):

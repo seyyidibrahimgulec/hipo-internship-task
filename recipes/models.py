@@ -1,6 +1,5 @@
 from django.db import models
 from users.models import UserProfile
-from django.db.models import Avg
 from django.utils import timezone
 
 
@@ -32,35 +31,10 @@ class Recipe(models.Model):
     def __str__(self):
         return self.title
 
-    @property
-    def rate_avg(self):
-        rates = Rate.objects.filter(recipe=self.pk)
-        ret_val = rates.aggregate(Avg('score'))['score__avg']
-        if ret_val:
-            return ret_val
-        else:
-            return 0
-
-    @property
-    def rate_count(self):
-        count = Rate.objects.filter(recipe=self.pk).count()
-        if count:
-            return count
-        else:
-            return 0
-
-    @property
-    def like_count(self):
-        count = Like.objects.filter(recipe=self.pk).count()
-        if count:
-            return count
-        else:
-            return 0
-
 
 class Rate(models.Model):
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserProfile, related_name='rates', on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, related_name='rates', on_delete=models.CASCADE)
     score = models.IntegerField()
 
 

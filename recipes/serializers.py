@@ -20,10 +20,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         presentation_serializer=IngredientSerializer, queryset=Ingredient.objects.all(),
         many=True, allow_empty=False
     )
+    average_rate = serializers.FloatField(read_only=True)
+    like_count = serializers.IntegerField(read_only=True)
+    rate_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Recipe
         fields = (
             'id', 'author', 'title', 'description', 'difficulty',
-            'image', 'ingredients'
+            'image', 'ingredients', 'like_count', 'average_rate',
+            'rate_count',
         )
