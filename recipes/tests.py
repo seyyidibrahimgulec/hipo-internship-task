@@ -298,16 +298,6 @@ class ListCreateDeleteLikesTestCase(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(recipe.likes.first())
         self.assertEqual(user, recipe.likes.first().user)
-        response = client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['like_count'], 1)
-        response = client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['like_count'], 1)
 
     def test_non_user_can_like_recipe(self):
         user, user_client = self.create_user()
@@ -317,16 +307,6 @@ class ListCreateDeleteLikesTestCase(BaseTestCase):
             reverse('like-recipe', kwargs={'pk': recipe.id})
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        response = client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['like_count'], 0)
-        response = client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['like_count'], 0)
 
     def test_user_can_list_like_of_recipes(self):
         user, client = self.create_user()
@@ -358,16 +338,6 @@ class ListCreateDeleteLikesTestCase(BaseTestCase):
             reverse('like-recipe', kwargs={'pk': recipe.id})
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        response = client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['like_count'], 0)
-        response = client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['like_count'], 0)
 
     def test_non_user_unlike_recipe(self):
         user, user_client = self.create_user()
@@ -378,16 +348,6 @@ class ListCreateDeleteLikesTestCase(BaseTestCase):
             reverse('like-recipe', kwargs={'pk': recipe.id})
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        response = client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['like_count'], 1)
-        response = client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['like_count'], 1)
 
 
 class CreateUpdateRatesTestCase(BaseTestCase):
@@ -401,18 +361,6 @@ class CreateUpdateRatesTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Rate.objects.filter(user=user, recipe=recipe, score=score).exists())
-        response = client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['rate_count'], 1)
-        self.assertEqual(response.data['average_rate'], 5)
-        response = client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['rate_count'], 1)
-        self.assertEqual(response.data['results'][0]['average_rate'], 5)
 
     def test_can_non_user_create_rate_to_recipe(self):
         user, user_client = self.create_user()
@@ -424,18 +372,6 @@ class CreateUpdateRatesTestCase(BaseTestCase):
             {'score': score}
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        response = client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['rate_count'], 0)
-        self.assertEqual(response.data['average_rate'], 0)
-        response = client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['rate_count'], 0)
-        self.assertEqual(response.data['results'][0]['average_rate'], 0)
 
     def test_can_user_update_rate_to_recipe(self):
         user, client = self.create_user()
@@ -449,18 +385,6 @@ class CreateUpdateRatesTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(Rate.objects.filter(user=user, recipe=recipe, score=new_score).exists())
-        response = client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['rate_count'], 1)
-        self.assertEqual(response.data['average_rate'], 3)
-        response = client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['rate_count'], 1)
-        self.assertEqual(response.data['results'][0]['average_rate'], 3)
 
     def test_can_non_user_update_rate_to_recipe(self):
         user, user_client = self.create_user()
@@ -474,18 +398,6 @@ class CreateUpdateRatesTestCase(BaseTestCase):
             {'score': new_score}
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        response = client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['rate_count'], 1)
-        self.assertEqual(response.data['average_rate'], 5)
-        response = client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['rate_count'], 1)
-        self.assertEqual(response.data['results'][0]['average_rate'], 5)
 
     def test_can_user_update_other_users_rate(self):
         user_a, user_a_client = self.create_user()
@@ -499,15 +411,3 @@ class CreateUpdateRatesTestCase(BaseTestCase):
             {'score': new_score}
         )
         self.assertEqual(Rate.objects.get(user=user_a, recipe=recipe).score, old_score)
-        response = user_a_client.get(
-            reverse('recipe-detail', kwargs={'pk': recipe.id}),
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['rate_count'], 2)
-        self.assertEqual(response.data['average_rate'], 4)
-        response = user_a_client.get(
-            reverse('list-create-recipe')
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['results'][0]['rate_count'], 2)
-        self.assertEqual(response.data['results'][0]['average_rate'], 4)
