@@ -5,7 +5,7 @@ from rest_framework import status
 from recipes.constants import base64image
 from users.models import UserProfile
 from rest_framework.authtoken.models import Token
-from recipes.models import Ingredient, Recipe, Like, Rate
+from recipes.models import Ingredient, Recipe, Like, Rate, Image, RecipeImage
 import uuid
 
 
@@ -40,10 +40,18 @@ class BaseTestCase(TestCase):
 
     def create_recipe(self, user):
         ingredients = self.create_ingredients()
-        recipe = Recipe.objects.create(title='test_title', description='test_desc', difficulty='E', image=base64image, author=user)
+        recipe = Recipe.objects.create(title='test_title', description='test_desc', difficulty='E', author=user)
+        RecipeImage.objects.create(recipe=recipe, image=Image.objects.create(image=base64image))
+        RecipeImage.objects.create(recipe=recipe, image=Image.objects.create(image=base64image))
         recipe.ingredients.add(ingredients[0])
         recipe.ingredients.add(ingredients[1])
         return recipe
+
+    def create_images(self):
+        images = list()
+        images.append(Image.objects.create(image=base64image).id)
+        images.append(Image.objects.create(image=base64image).id)
+        return images
 
 
 class ListCreateIngredientTestCase(BaseTestCase):
@@ -98,12 +106,12 @@ class ListCreateIngredientTestCase(BaseTestCase):
 class ListCreateRecipeTestCase(BaseTestCase):
     url = reverse('list-create-recipe')
 
-    def create_recipe(self, client, ingredients, title='test_title', description='test_desc', difficulty='E', image=base64image):
+    def create_recipe(self, client, ingredients, images, title='test_title', description='test_desc', difficulty='E'):
         response = client.post(
             self.url,
             {
                 'title': title, 'description': description, 'difficulty': difficulty,
-                'ingredients': ingredients, 'image': image
+                'ingredients': ingredients, 'images': images
             },
         )
         return response
@@ -118,57 +126,61 @@ class ListCreateRecipeTestCase(BaseTestCase):
     def test_create_recipe_with_authentication(self):
         user, client = self.create_user()
         ingredients = self.create_ingredients()
-        response = self.create_recipe(client, ingredients)
+        images = self.create_images()
+        response = self.create_recipe(client, ingredients, images)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIsNotNone(response.data.get('id'))
         self.assertEqual(response.data.get('author').get('username'), user.username)
-        self.assertIsNotNone(response.data.get('image'))
+        self.assertIsNotNone(response.data.get('images'))
         self.assertEqual([d['id'] for d in response.data.get('ingredients')], ingredients)
 
     def test_create_recipe_without_authentication(self):
         client = APIClient()
         ingredients = self.create_ingredients()
-        response = self.create_recipe(client, ingredients)
+        images = self.create_images()
+        response = self.create_recipe(client, ingredients, images)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_recipe_without_title(self):
         user, client = self.create_user()
         ingredients = self.create_ingredients()
-        response = self.create_recipe(client=client, title='', ingredients=ingredients)
+        images = self.create_images()
+        response = self.create_recipe(client=client, title='', ingredients=ingredients, images=images)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_recipe_without_description(self):
         user, client = self.create_user()
         ingredients = self.create_ingredients()
-        response = self.create_recipe(client=client, description='', ingredients=ingredients)
+        images = self.create_images()
+        response = self.create_recipe(client=client, description='', ingredients=ingredients, images=images)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_recipe_without_difficulty(self):
         user, client = self.create_user()
         ingredients = self.create_ingredients()
-        response = self.create_recipe(client=client, difficulty='', ingredients=ingredients)
+        images = self.create_images()
+        response = self.create_recipe(client=client, difficulty='', ingredients=ingredients, images=images)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_recipe_with_incorrect_difficulty(self):
         user, client = self.create_user()
         ingredients = self.create_ingredients()
-        response = self.create_recipe(client=client, difficulty='A', ingredients=ingredients)
+        images = self.create_images()
+        response = self.create_recipe(client=client, difficulty='A', ingredients=ingredients, images=images)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_recipe_without_image(self):
         user, client = self.create_user()
         ingredients = self.create_ingredients()
-        response = self.create_recipe(client=client, image='', ingredients=ingredients)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIsNotNone(response.data.get('id'))
-        self.assertEqual(response.data.get('author').get('username'), user.username)
-        self.assertIsNone(response.data.get('image'))
-        self.assertEqual([d['id'] for d in response.data.get('ingredients')], ingredients)
+        images = list()
+        response = self.create_recipe(client=client, images=images, ingredients=ingredients)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_recipe_without_ingredients(self):
         user, client = self.create_user()
         ingredients = list()
-        response = self.create_recipe(client=client, ingredients=ingredients)
+        images = self.create_images()
+        response = self.create_recipe(client=client, ingredients=ingredients, images=images)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_list_recipe(self):
@@ -181,6 +193,7 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
         user, client = self.create_user()
         recipe = self.create_recipe(user=user)
         ingredients = self.create_ingredients()
+        images = self.create_images()
         update_title = 'update_title'
         update_description = 'update_description'
         update_difficulty = 'E'
@@ -188,15 +201,14 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
             reverse('recipe-detail', kwargs={'pk': recipe.id}),
             {
                 'title': update_title, 'description': update_description, 'difficulty': update_difficulty,
-                'image': base64image, 'ingredients': ingredients
+                'images': images, 'ingredients': ingredients
             },
-            format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(response.data.get('id'))
         self.assertEqual(response.data.get('author').get('username'), user.username)
         self.assertEqual([d['id'] for d in response.data.get('ingredients')], ingredients)
-        self.assertIsNotNone(response.data.get('image'))
+        self.assertIsNotNone(response.data.get('images'))
         self.assertEqual(response.data.get('title'), update_title)
         self.assertEqual(response.data.get('description'), update_description)
         self.assertEqual(response.data.get('difficulty'), update_difficulty)
@@ -206,6 +218,7 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
         user_2, client_2 = self.create_user()
         recipe = self.create_recipe(user=user_1)
         ingredients = self.create_ingredients()
+        images = self.create_images()
         update_title = 'update_title'
         update_description = 'update_description'
         update_difficulty = 'E'
@@ -213,9 +226,8 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
             reverse('recipe-detail', kwargs={'pk': recipe.id}),
             {
                 'title': update_title, 'description': update_description, 'difficulty': update_difficulty,
-                'image': base64image, 'ingredients': ingredients
+                'images': images, 'ingredients': ingredients
             },
-            format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -261,19 +273,19 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
         update_description = 'update_description'
         update_difficulty = 'E'
         ingredients = self.create_ingredients()
+        images = self.create_images()
         response = admin_client.put(
             reverse('recipe-detail', kwargs={'pk': recipe.id}),
             {
                 'title': update_title, 'description': update_description, 'difficulty': update_difficulty,
-                'image': base64image, 'ingredients': ingredients
+                'images': images, 'ingredients': ingredients
             },
-            format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(response.data.get('id'))
         self.assertEqual(response.data.get('author').get('username'), user.username)
         self.assertEqual([d['id'] for d in response.data.get('ingredients')], ingredients)
-        self.assertIsNotNone(response.data.get('image'))
+        self.assertIsNotNone(response.data.get('images'))
         self.assertEqual(response.data.get('title'), update_title)
         self.assertEqual(response.data.get('description'), update_description)
         self.assertEqual(response.data.get('difficulty'), update_difficulty)
@@ -464,3 +476,24 @@ class CreateUpdateRatesTestCase(BaseTestCase):
         )
         self.assertEqual(response.data['rate_count'], 2)
         self.assertEqual(response.data['average_rate'], average)
+
+
+class CreateImageTestCase(BaseTestCase):
+    url = reverse('create-image')
+
+    def test_user_can_create_image(self):
+        user, client = self.create_user()
+        response = client.post(
+            self.url,
+            {'image': base64image}
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIsNotNone(response.data['image'])
+
+    def test_non_user_can_create_image(self):
+        client = APIClient()
+        response = client.post(
+            self.url,
+            {'image': base64image}
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

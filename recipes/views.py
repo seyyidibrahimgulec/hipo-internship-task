@@ -231,6 +231,6 @@ class CreateUpdateRatesView(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class ListCreateImageView(CreateAPIView):
+class CreateImageView(CreateAPIView):
     serializer_class = ImageSerializer
     permission_classes = (permissions.IsAuthenticated, )
