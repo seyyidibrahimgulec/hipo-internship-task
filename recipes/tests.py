@@ -5,8 +5,9 @@ from rest_framework import status
 from recipes.constants import base64image
 from users.models import UserProfile
 from rest_framework.authtoken.models import Token
-from recipes.models import Ingredient, Recipe, Like, Rate, Image, RecipeImage
+from recipes.models import Ingredient, Recipe, Like, Rate, RecipeImage
 import uuid
+from recipes.serializers import IngredientSerializer, ImageSerializer
 
 
 class BaseTestCase(TestCase):
@@ -24,7 +25,14 @@ class BaseTestCase(TestCase):
         ingredients = list()
         for i in range(ingredient_quantity):
             name = f"test_ingredient_{str(uuid.uuid4())}"
-            ingredient = Ingredient.objects.create(name=name, image=base64image)
+            ingredient_dict = {
+                'name': name,
+                'image': base64image
+            }
+            ingredient = IngredientSerializer(data=ingredient_dict)
+            ingredient.is_valid()
+            ingredient.save()
+            ingredient = Ingredient.objects.get(name=name)
             ingredients.append(ingredient.id)
         return ingredients
 
@@ -41,17 +49,28 @@ class BaseTestCase(TestCase):
     def create_recipe(self, user):
         ingredients = self.create_ingredients()
         recipe = Recipe.objects.create(title='test_title', description='test_desc', difficulty='E', author=user)
-        RecipeImage.objects.create(recipe=recipe, image=Image.objects.create(image=base64image))
-        RecipeImage.objects.create(recipe=recipe, image=Image.objects.create(image=base64image))
+        image_dict = {'image': base64image}
+        image = ImageSerializer(data=image_dict)
+        image.is_valid()
+        image = image.save()
+        RecipeImage.objects.create(recipe=recipe, image=image)
+        image = ImageSerializer(data=image_dict)
+        image.is_valid()
+        image = image.save()
+        RecipeImage.objects.create(recipe=recipe, image=image)
         recipe.ingredients.add(ingredients[0])
         recipe.ingredients.add(ingredients[1])
         return recipe
 
     def create_images(self):
-        images = list()
-        images.append(Image.objects.create(image=base64image).id)
-        images.append(Image.objects.create(image=base64image).id)
-        return images
+        image_ids = list()
+        for i in range(2):
+            image_dict = {'image': base64image}
+            image = ImageSerializer(data=image_dict)
+            image.is_valid()
+            image = image.save()
+            image_ids.append(image.id)
+        return image_ids
 
 
 class ListCreateIngredientTestCase(BaseTestCase):
