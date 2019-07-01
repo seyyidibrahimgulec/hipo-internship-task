@@ -136,7 +136,7 @@ class ListCreateRecipeTestCase(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIsNotNone(response.data.get('id'))
         self.assertEqual(response.data.get('author').get('username'), user.username)
-        self.assertIsNotNone(response.data.get('images'))
+        self.assertEqual([d['id'] for d in response.data.get('images')], images)
         self.assertEqual([d['id'] for d in response.data.get('ingredients')], ingredients)
 
     def test_create_recipe_without_authentication(self):
@@ -213,7 +213,7 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
         self.assertIsNotNone(response.data.get('id'))
         self.assertEqual(response.data.get('author').get('username'), user.username)
         self.assertEqual([d['id'] for d in response.data.get('ingredients')], ingredients)
-        self.assertIsNotNone(response.data.get('images'))
+        self.assertEqual([d['id'] for d in response.data.get('images')], images)
         self.assertEqual(response.data.get('title'), update_title)
         self.assertEqual(response.data.get('description'), update_description)
         self.assertEqual(response.data.get('difficulty'), update_difficulty)
@@ -290,7 +290,7 @@ class RetrieveUpdateDestroyRecipeTestCase(BaseTestCase):
         self.assertIsNotNone(response.data.get('id'))
         self.assertEqual(response.data.get('author').get('username'), user.username)
         self.assertEqual([d['id'] for d in response.data.get('ingredients')], ingredients)
-        self.assertIsNotNone(response.data.get('images'))
+        self.assertEqual([d['id'] for d in response.data.get('images')], images)
         self.assertEqual(response.data.get('title'), update_title)
         self.assertEqual(response.data.get('description'), update_description)
         self.assertEqual(response.data.get('difficulty'), update_difficulty)
