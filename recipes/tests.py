@@ -22,12 +22,12 @@ class BaseTestCase(TestCase):
         return user, client
 
     def create_ingredients(self, ingredient_quantity=2):
-        ingredients = list()
+        ingredient_ids = list()
         for i in range(ingredient_quantity):
             name = f"test_ingredient_{str(uuid.uuid4())}"
             image = Base64ImageField().to_internal_value(base64image)
-            ingredients.append(Ingredient.objects.create(name=name, image=image).id)
-        return ingredients
+            ingredient_ids.append(Ingredient.objects.create(name=name, image=image).id)
+        return ingredient_ids
 
     def create_admin(self):
         username = f"test_user_{str(uuid.uuid4())}"
