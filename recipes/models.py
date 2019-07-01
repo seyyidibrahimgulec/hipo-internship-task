@@ -5,14 +5,14 @@ from django.utils import timezone
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    image = models.ImageField(upload_to='ingredient/', max_length=255)
+    image = models.ImageField(upload_to='ingredient/')
 
     def __str__(self):
         return self.name
 
 
 class Image(models.Model):
-    image = models.ImageField(upload_to='image/', max_length=255)
+    image = models.ImageField(upload_to='image/')
 
 
 class Recipe(models.Model):
