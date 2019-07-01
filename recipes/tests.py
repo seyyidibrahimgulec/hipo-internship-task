@@ -5,9 +5,9 @@ from rest_framework import status
 from recipes.constants import base64image
 from users.models import UserProfile
 from rest_framework.authtoken.models import Token
-from recipes.models import Recipe, Like, Rate, RecipeImage
+from recipes.models import Recipe, Like, Rate, RecipeImage, Ingredient, Image
 import uuid
-from recipes.serializers import IngredientSerializer, ImageSerializer
+from drf_extra_fields.fields import Base64ImageField
 
 
 class BaseTestCase(TestCase):
@@ -25,14 +25,8 @@ class BaseTestCase(TestCase):
         ingredients = list()
         for i in range(ingredient_quantity):
             name = f"test_ingredient_{str(uuid.uuid4())}"
-            ingredient_dict = {
-                'name': name,
-                'image': base64image
-            }
-            ingredient = IngredientSerializer(data=ingredient_dict)
-            ingredient.is_valid()
-            ingredient = ingredient.save()
-            ingredients.append(ingredient.id)
+            image = Base64ImageField().to_internal_value(base64image)
+            ingredients.append(Ingredient.objects.create(name=name, image=image).id)
         return ingredients
 
     def create_admin(self):
@@ -48,14 +42,9 @@ class BaseTestCase(TestCase):
     def create_recipe(self, user):
         ingredients = self.create_ingredients()
         recipe = Recipe.objects.create(title='test_title', description='test_desc', difficulty='E', author=user)
-        image_dict = {'image': base64image}
-        image = ImageSerializer(data=image_dict)
-        image.is_valid()
-        image = image.save()
+        image_file = Base64ImageField().to_internal_value(base64image)
+        image = Image.objects.create(image=image_file)
         RecipeImage.objects.create(recipe=recipe, image=image)
-        image = ImageSerializer(data=image_dict)
-        image.is_valid()
-        image = image.save()
         RecipeImage.objects.create(recipe=recipe, image=image)
         recipe.ingredients.add(ingredients[0])
         recipe.ingredients.add(ingredients[1])
@@ -64,10 +53,8 @@ class BaseTestCase(TestCase):
     def create_images(self):
         image_ids = list()
         for i in range(2):
-            image_dict = {'image': base64image}
-            image = ImageSerializer(data=image_dict)
-            image.is_valid()
-            image = image.save()
+            image_file = Base64ImageField().to_internal_value(base64image)
+            image = Image.objects.create(image=image_file)
             image_ids.append(image.id)
         return image_ids
 
