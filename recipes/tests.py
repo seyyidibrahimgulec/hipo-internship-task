@@ -5,7 +5,7 @@ from rest_framework import status
 from recipes.constants import base64image
 from users.models import UserProfile
 from rest_framework.authtoken.models import Token
-from recipes.models import Ingredient, Recipe, Like, Rate, RecipeImage
+from recipes.models import Recipe, Like, Rate, RecipeImage
 import uuid
 from recipes.serializers import IngredientSerializer, ImageSerializer
 
@@ -31,8 +31,7 @@ class BaseTestCase(TestCase):
             }
             ingredient = IngredientSerializer(data=ingredient_dict)
             ingredient.is_valid()
-            ingredient.save()
-            ingredient = Ingredient.objects.get(name=name)
+            ingredient = ingredient.save()
             ingredients.append(ingredient.id)
         return ingredients
 
