@@ -14,6 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,8 +27,8 @@ SECRET_KEY = '9!8clgflpzby424($xyrcxd2-b&hqmal5r5ain7o1bxjyqco@o'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1'
-    'tim-zed-31581.herokuapp.com/'
+    '127.0.0.1',
+    'localhost',
 ]
 
 
@@ -150,3 +151,27 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+
+# Templates
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(SETTINGS_PATH, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'seyyidtest@hotmail.com'
+EMAIL_HOST_PASSWORD = 'pGh5PznLznVdBLQ'
