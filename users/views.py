@@ -12,14 +12,13 @@ class UserRegistrationView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
 
     def post(self, request, *args, **kwargs):
-        return_value = super(UserRegistrationView, self).post(request=request)
+        response = super(UserRegistrationView, self).post(request=request)
         context = {
-            'program': 'Backend',
-            'id': return_value.data['id'],
-            'username': return_value.data['username'],
+            'id': response.data['id'],
+            'username': response.data['username'],
         }
         send_html_email.delay(subject='Test', recipient_list=['seyyidibrahimgulec@gmail.com', ], template_name='emails/email.html', context=context)
-        return return_value
+        return response
 
 
 class UserAuthenticationView(ObtainAuthToken):
