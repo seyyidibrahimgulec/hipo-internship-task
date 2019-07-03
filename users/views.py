@@ -1,6 +1,3 @@
-# from django.contrib.auth.forms import UserCreationForm
-# from django.urls import reverse_lazy
-# from django.views import generic
 from rest_framework import generics, status
 from .serializers import UserSerializer, CreateUserSerializer, CustomAuthTokenSerializer, ChangePasswordSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -8,22 +5,21 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from users.models import UserProfile
-from django.core.mail import send_mail
-from HipoProject.settings import EMAIL_HOST_USER
-from django.template.loader import render_to_string
+from recipes.tasks import send_email_wrapper
 
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        email_from = EMAIL_HOST_USER
-        send_mail(subject='Test', message='Test message', from_email=email_from,
-                  recipient_list=['seyyidibrahimgulec@gmail.com', ], fail_silently=False,
-                  html_message=render_to_string(template_name='email.html'))
-        return super(UserRegistrationView, self).post(request=request)
+        return_value = super(UserRegistrationView, self).post(request=request)
+        context = {
+            'program': 'Backend',
+            'id': '124125125',
+            'username': 'Test User',
+        }
+        send_email_wrapper.delay(subject='Test', recipient_list=['seyyidibrahimgulec@gmail.com', ], context=context)
+        return return_value
 
 
 class UserAuthenticationView(ObtainAuthToken):

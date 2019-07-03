@@ -1,0 +1,68 @@
+{% extends 'emails/base.html' %}
+{% block content %}
+<body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" bgcolor="" class="background">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" class="background">
+    <tr>
+      <td align="center" valign="top" width="100%" class="background">
+        <center>
+          <table cellpadding="0" cellspacing="0" width="600" class="wrap">
+            <tr>
+              <td valign="top" class="wrap-cell" style="padding-top:30px; padding-bottom:30px;">
+                <table cellpadding="0" cellspacing="0" class="force-full-width">
+                  <tr>
+                   <td height="140" valign="top" class="header-cell" align="center">
+                      <img width="196" height="140" src="https://mobbed.io/wp-content/uploads/2017/07/hipo-logo-400x0-c-default.png" alt="logo">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td valign="top" class="body-cell">
+
+                      <table cellpadding="0" cellspacing="0" width="100%" bgcolor="#ffffff">
+                        <tr>
+                          <td valign="top" style="padding-bottom:15px; background-color:#ffffff;">
+                            <h1>Hi {{ username }}</h1>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" style="padding-bottom:20px; background-color:#ffffff;">
+                            Thank you for applying to the {{ program }} internship position for `Early summer` or `Late summer`
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" style="padding-bottom:20px; background-color:#ffffff;">
+                            We have received your application and recorded it in our database with the following id: {{ id }}. You can update your application using the API
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" style="padding-bottom:20px; background-color:#ffffff;">
+                            We will review all applications within 2 weeks after the application period ends. In any case, we will keep you posted on the status of your application.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" style="padding-bottom:20px; background-color:#ffffff;">
+                            Thank you for taking time to make this application.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" style="padding-bottom:20px; background-color:#ffffff;">
+                            Here is a baby Hipo:
+                          </td>
+                        </tr>
+                        <tr>
+                          <td valign="top" style="padding-bottom:20px; background-color:#ffffff;" align="center">
+                            <img src="https://gallery.mailchimp.com/527c222742f88d9e64eee8ec0/images/60b41409-ba78-4ca5-acd4-83964277721c.gif" alt="Baby Hipo" class="align-center">
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </center>
+      </td>
+    </tr>
+  </table>
+{% endblock %}
+
+
