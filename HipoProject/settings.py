@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'rest_framework.authtoken',
+    'celery',
+    'flower',
 ]
 
 MIDDLEWARE = [
@@ -176,5 +178,3 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'seyyidibrahimgulec@gmail.com'
 EMAIL_HOST_PASSWORD = 'pass'
-
-CELERY_BROKER_URL = 'amqp://localhost'

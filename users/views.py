@@ -5,7 +5,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from users.models import UserProfile
-from recipes.tasks import send_email_wrapper
+from recipes.tasks import send_html_email
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -15,10 +15,10 @@ class UserRegistrationView(generics.CreateAPIView):
         return_value = super(UserRegistrationView, self).post(request=request)
         context = {
             'program': 'Backend',
-            'id': '124125125',
-            'username': 'Test User',
+            'id': return_value.data['id'],
+            'username': return_value.data['username'],
         }
-        send_email_wrapper.delay(subject='Test', recipient_list=['seyyidibrahimgulec@gmail.com', ], context=context)
+        send_html_email.delay(subject='Test', recipient_list=['seyyidibrahimgulec@gmail.com', ], template_name='emails/email.html', context=context)
         return return_value
 
 
