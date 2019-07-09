@@ -26,8 +26,9 @@ SECRET_KEY = '9!8clgflpzby424($xyrcxd2-b&hqmal5r5ain7o1bxjyqco@o'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1'
-    'tim-zed-31581.herokuapp.com/'
+    'localhost',
+    '127.0.0.1',
+    'tim-zed-31581.herokuapp.com/',
 ]
 
 
