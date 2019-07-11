@@ -11,27 +11,15 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '9!8clgflpzby424($xyrcxd2-b&hqmal5r5ain7o1bxjyqco@o'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'tim-zed-31581.herokuapp.com/',
-]
-
 
 # Application definition
 
@@ -78,26 +66,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'HipoProject.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'seyyidibrahimgulec',
-        'USER': 'seyyidibrahimgulec',
-        'PASSWORD': 'M(sqg69;"rSA;"y',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-        'TEST': {
-            'NAME': 'mytestdatabase',
-        },
-    }
-}
-
-
-# Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -152,7 +120,3 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-
-
-# Activate Django-Heroku.
-django_heroku.settings(locals())
