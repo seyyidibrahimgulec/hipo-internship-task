@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['tim-zed-31581.herokuapp.com/']
+ALLOWED_HOSTS = ['*']
 
 DISABLE_COLLECTSTATIC = 1
 
