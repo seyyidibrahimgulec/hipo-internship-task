@@ -4,8 +4,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-DISABLE_COLLECTSTATIC = 1
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 DATABASES = {
