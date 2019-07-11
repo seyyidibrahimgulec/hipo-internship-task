@@ -10,3 +10,4 @@ Markdown==3.1.1
 Pillow==6.0.0
 Pygments==2.4.2
 coreapi
+whitenoise==4.1.2
