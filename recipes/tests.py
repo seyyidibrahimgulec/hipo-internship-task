@@ -502,3 +502,6 @@ class CreateImageTestCase(BaseTestCase):
             {'image': base64image}
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_tmp(self):
+        self.assertFalse(True)
