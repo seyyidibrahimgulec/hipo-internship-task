@@ -503,5 +503,5 @@ class CreateImageTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_temp(self):
+    def test_tmp(self):
         self.assertFalse(True)
