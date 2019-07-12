@@ -9,6 +9,7 @@ install: # => 5
 before_script: # => 6
   - psql -c 'create database travis_ci_test;' -U postgres
 script: # => 7
+  - export DJANGO_SETTINGS_MODULE=settings.local
   - python manage.py test
   - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash ./travis/run_on_pull_requests; fi'
   - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./travis/run_on_non_pull_requests; fi'
