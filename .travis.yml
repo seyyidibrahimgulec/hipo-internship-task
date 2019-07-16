@@ -1,3 +1,4 @@
 language: python
 script:
   - export DJANGO_SETTINGS_MODULE=settings.staging_test
+  - python manage.py test
