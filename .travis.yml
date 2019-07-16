@@ -1,14 +1,9 @@
+dist: xenial
 language: python
-python:
-  - "3.7"
-services:
-  - postgresql
-env:
-  - DJANGO=2.2 DB=postgresql
-  - export DJANGO_SETTINGS_MODULE=settings.staging_test
+virtualenv:
+  system_site_packages: true
 install:
   - pip install -r requirements.txt
-before_script:
-  - postgresql -e 'create database test;' -u root
 script:
+  - export DJANGO_SETTINGS_MODULE=settings.staging_test
   - python manage.py test
