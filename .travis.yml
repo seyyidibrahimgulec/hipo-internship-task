@@ -1,10 +1,97 @@
+dist: xenial
 language: python
-services: postgresql
-env:
-  - export DJANGO_SETTINGS_MODULE=settings.staging_test
+sudo: false
+env: export DJANGO_SETTINGS_MODULE=settings.staging_test
+matrix:
+  include:
+      - python: 2.7
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=sqlite
+      - python: 2.7
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 2.7
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=sqlite
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=sqlite
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=sqlite
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=sqlite
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.5
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=sqlite
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=sqlite
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=sqlite
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=sqlite
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.6
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=sqlite
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=1.12 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=sqlite
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.1 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=sqlite
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.2 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=sqlite
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=postgres DJANGO_DB_NAME=testdb DJANGO_DB_USER=postgres
+      - python: 3.7
+        env: DJANGO_VERSION_CEILING=2.3 DJANGO_DB_ENGINE=mysql DJANGO_DB_NAME=testdb DJANGO_DB_USER=travis
 install:
-  - pip install -r requirements.txt
+  - pip install "Django<$DJANGO_VERSION_CEILING" mysqlclient psycopg2
+  - "pip install flake8 pylint pytest pytest-django"
+  - "pip install -e ."
+before_script:
+  - "mysql -e 'create database testdb;'"
+  - "psql -c 'create database testdb;' -U postgres"
 script:
-  - python manage.py makemigrations
-  - python manage.py migrate
-  - python manage.py test
+  - "python setup.py test"
+  - "./lint.sh"
+services:
+    - mysql
+    - postgresql
