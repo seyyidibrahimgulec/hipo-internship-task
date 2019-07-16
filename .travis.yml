@@ -1,4 +1,6 @@
 language: python
+before_script:
+  - psql -c "CREATE DATABASE mydb;" -U postgres
 script:
   - export DJANGO_SETTINGS_MODULE=settings.staging_test
   - python manage.py test
