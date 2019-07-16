@@ -1,4 +1,6 @@
 language: python
+services: postgresql
+postgresql: "11.4"
 before_script:
   - psql -c "CREATE DATABASE mydb;" -U postgres
 script:
