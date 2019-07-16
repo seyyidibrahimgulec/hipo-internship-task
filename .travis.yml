@@ -6,7 +6,6 @@ addons:
     - postgresql-10
     - postgresql-client-10
 env:
-  - DJANGO=2.2.1
   global:
   - PGPORT=5433
 before_install:
