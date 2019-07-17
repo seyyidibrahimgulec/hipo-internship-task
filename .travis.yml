@@ -4,9 +4,8 @@ python:
 addons:
   postgresql: "10"
 env:
-  global:
-    - DJANGO=2.2 DB=postgres
-    - PGPORT=5433
+  - DJANGO=2.2 DB=postgres
+  - PGPORT=5433
 before_install:
   - export DJANGO_SETTINGS_MODULE=settings.staging_test
 install:
