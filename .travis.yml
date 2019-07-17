@@ -10,8 +10,6 @@ before_install:
 install:
   - pip install -r requirements.txt
 before_script:
-  - python manage.py migrate recipes zero
-  - python manage.py migrate users zero
   - rm -rf users/migrations/00*
   - rm -rf recipes/migrations/00*
   - psql -c 'create database testdb;' -U postgres
