@@ -1,5 +1,0 @@
-* Hakkında
-  Bu proje [[http://hipolabs.com/][hipolabs]] için intern görevi olarak yapılmıştır. 3-4 tablodan oluşan, çok karmaşık olmayan bir CRUD uygulamasıdır.
-
-* Çalıştırma
-  Pip ile gerekli yüklemeler yapıldıktan sonra djangonun createsuper user'ı ile bir admin kullanıcısı yaratılıp, bir kaç adet ingredient yaratıldıktan sonra ugulamayı normal bir kullanıcı olarak deneyebilirsiniz.

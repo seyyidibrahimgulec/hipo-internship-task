@@ -8,3 +8,5 @@ media/
 .idea
 .DS_STORE
 .flake8
+data/
+mysite.template
