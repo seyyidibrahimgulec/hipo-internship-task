@@ -10,3 +10,4 @@ media/
 .flake8
 data/
 mysite.template
+celerybeat*
