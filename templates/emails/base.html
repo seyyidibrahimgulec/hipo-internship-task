@@ -1,0 +1,40 @@
+<!DOCTYPE html>{% load static %}
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+  </head>
+  <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" bgcolor="" class="background">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" class="background">
+      <tr>
+        <td align="center" valign="top" width="100%" class="background">
+          <center>
+            <table cellpadding="0" cellspacing="0" width="600" class="wrap">
+              <tr>
+                <td valign="top" class="wrap-cell" style="padding-top:30px; padding-bottom:30px;">
+                  <table cellpadding="0" cellspacing="0" class="force-full-width">
+                    <tr>
+                     <td height="140" valign="top" class="header-cell" align="center">
+                        <img width="196" height="140" src="https://mobbed.io/wp-content/uploads/2017/07/hipo-logo-400x0-c-default.png" alt="logo">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign="top" class="body-cell">
+                      {% block content %}
+                      {% endblock %}
+                      </td>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </center>
+        </td>
+      </tr>
+    </table>
+  </body>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+</html>

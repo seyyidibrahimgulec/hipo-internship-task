@@ -1,0 +1,43 @@
+{% extends 'emails/base.html' %} <!-- https://raw.githubusercontent.com/sendwithus/templates/master/templates/zen-flat/reignite.html
+                                      https://www.dyspatch.io/resources/templates/zen-flat/ (reignite)-->
+{% block content %}
+<table cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+    <td valign="top" style="padding-bottom:15px;">
+      <h1>Hi {{ username }}</h1>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" style="padding-bottom:20px;">
+      Thank you for applying.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" style="padding-bottom:20px;">
+      We have received your application and recorded it in our database with the following id: {{ id }}. You can update your application using the API
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" style="padding-bottom:20px;">
+      We will review all applications within 2 weeks after the application period ends. In any case, we will keep you posted on the status of your application.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" style="padding-bottom:20px;">
+      Thank you for taking time to make this application.
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" style="padding-bottom:20px;">
+      Here is a baby Hipo:
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" style="padding-bottom:20px;" align="center">
+      <img src="https://gallery.mailchimp.com/527c222742f88d9e64eee8ec0/images/60b41409-ba78-4ca5-acd4-83964277721c.gif" alt="Baby Hipo" class="align-center">
+    </td>
+  </tr>
+</table>
+{% endblock %}
+
+

@@ -1,6 +1,3 @@
-# from django.contrib.auth.forms import UserCreationForm
-# from django.urls import reverse_lazy
-# from django.views import generic
 from rest_framework import generics, status
 from .serializers import UserSerializer, CreateUserSerializer, CustomAuthTokenSerializer, ChangePasswordSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -8,10 +5,20 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from users.models import UserProfile
+from recipes.tasks import send_html_email
 
 
 class UserRegistrationView(generics.CreateAPIView):
     serializer_class = CreateUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super(UserRegistrationView, self).post(request=request)
+        context = {
+            'id': response.data['id'],
+            'username': response.data['username'],
+        }
+        send_html_email.delay(subject='Test', recipient_list=['seyyidibrahimgulec@gmail.com', ], template_name='emails/email.html', context=context)
+        return response
 
 
 class UserAuthenticationView(ObtainAuthToken):
