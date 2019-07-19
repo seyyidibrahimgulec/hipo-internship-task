@@ -8,6 +8,5 @@ media/
 .idea
 .DS_STORE
 .flake8
-local.py
 data/
 mysite.template
