@@ -6,8 +6,6 @@ services:
       - POSTGRES_DB=recipe
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
-    ports:
-      - "5432:5432"
     volumes:
       - "./data/db:/var/lib/postgresql/data"
   web:
@@ -16,8 +14,6 @@ services:
       - "./code"
     environment:
       - DJANGO_SETTINGS_MODULE=settings.local
-    ports:
-      - "8000:8000"
     restart: unless-stopped
     tty: true
     depends_on:
