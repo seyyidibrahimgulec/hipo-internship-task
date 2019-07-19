@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'celery',
-    'redis'
+    'redis',
+    'flower',
 ]
 
 MIDDLEWARE = [
