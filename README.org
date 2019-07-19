@@ -1,5 +1,0 @@
-* Hakkında
-  Bu proje [[http://hipolabs.com/][hipolabs]] için intern görevi olarak yapılmıştır. 3-4 tablodan oluşan, çok karmaşık olmayan bir CRUD uygulamasıdır.
-
-* Dokümantasyon
-  [[https://tim-zed-31581.herokuapp.com/docs/][Dokümantasyon]]
