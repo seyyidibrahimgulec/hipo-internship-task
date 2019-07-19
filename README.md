@@ -2,7 +2,7 @@
 This project was made as an intern task for [hipolabs](https://hipolabs.com/).
 
 ## Requirements
-You need to install [Docker][] and [Docker-Compose][].
+You need to install [Docker](https://www.docker.com/) and [Docker-Compose](https://docs.docker.com/compose/).
 
 ## Installation
 1. Clone this repository:`git clone git@github.com:seyyidibrahimgulec/HipoBackendTask.git`.
